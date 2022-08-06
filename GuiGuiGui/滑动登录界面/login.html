@@ -5,8 +5,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>加入C919作战区</title>
-    <link rel="stylesheet" href="./css/index.css">
+    <title>欢迎进入C919作战区</title>
+    <link rel="stylesheet" href="./css/login.css">
 </head>
 
 <body>
@@ -26,28 +26,45 @@
                 <h1>login</h1>
                 <input type="text" placeholder="用户名">
                 <input type="password" placeholder="密码">
-                <button>登录</button>
+                <button>登录</button>            
                 <p>找回密码</p><!--需要添加找回密码网址-->
+                <button id="threelogin">第三方登录</button>
+            </div>
+            <!-- 第三方登录 -->
+            <div class="threelogin-box hidden">
+                <h1>login</h1>
+                <a href="链接地址" style='text-decoration:none'><img src="./img/wx.jpg" alt="">
+                    <p>微信登录</p>
+                </a>
+                <a href="链接地址" style='text-decoration:none'><img src="./img/wb.jpg" alt="">
+                    <p>微博登录</p>
+                </a>
+                <a href="链接地址" style='text-decoration:none'><img src="./img/zfb.jpg" alt="">
+                    <p>支付宝登录</p>
+                </a>
+                <button id="signin">已有账号登录</button>
             </div>
         </div>
+
         <div class="con-box left">
-            <h2>快加入<span>C919作战区</span></h2>
+            <h2>加入<span>C919作战区</span></h2>
             <p><span>注册</span>一个账号吧</p>
-            <img src="./img/1.jpg" alt="">
+            <img src="./img/11.jpg" alt="">
             <p>已有帐号</p>
             <button id="login">去登录</button>
         </div>
         <div class="con-box right">
             <h2>进入<span>C919作战区</span></h2>
-            <p>快点<span>登录</span>吧</p>
-            <img src="./img/2.jpg" alt="">
+            <p>点击<span>登录</span>进入</p>
+            <img src="./img/22.jpg" alt="">
             <p>没有帐号？</p>
             <button id="register">去注册</button>
         </div>
     </div>
 
 </body>
+
 <script src="./js/jquery-3.2.1.slim.min.js"></script>
-<script src="./js/index.js"></script>
+<script src="./js/login.js"></script>
 
 </html>
