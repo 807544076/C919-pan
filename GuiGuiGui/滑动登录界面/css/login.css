@@ -9,7 +9,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background: linear-gradient(200deg, #f3e7e9, #e3eeff);
+    background: linear-gradient(200deg, #cbdcf5, #fce7ef);
 }
 
 .container {
@@ -25,7 +25,7 @@ body {
     position: absolute;
     top: -10%;
     left: 3%;
-    background-color: #d3b7d8;
+    background-color: #bcb7d8;
     width: 330px;
     height: 500px;
     border-radius: 5px;
@@ -38,7 +38,8 @@ body {
 }
 
 .register-box,
-.login-box {
+.login-box,
+.threelogin-box {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -49,6 +50,30 @@ body {
     font-size: 12px;
     letter-spacing: 2px;
     color: #8e9aaf;
+    text-align: center;
+}
+
+.threelogin-box img {
+    border-radius: 100%;
+    overflow: hidden;
+    margin-right: 10px;
+    width: 40px;
+    height: 40px;
+    opacity: 0.9;
+}
+
+.threelogin-box a {
+    display: inline-block;
+    font-size: 18px;
+    margin: 18px 0;
+}
+
+.threelogin-box p {
+    display: inline-block;
+    vertical-align: top;
+    font-size: 18px;
+    color: #efebf5;
+    margin: 10px 0;
     text-align: center;
 }
 
@@ -86,7 +111,7 @@ input::placeholder {
 }
 
 input:focus {
-    color: #a262ad;
+    color: #6262ad;
     outline: none;
     border-bottom: 1px solid #a262ad80;
     transition: 0.5s;
@@ -98,20 +123,20 @@ input:focus::placeholder {
 
 .form-box button {
     width: 70%;
-    margin-top: 35px;
-    margin-bottom: 25px;
+    margin-top: 12px;
+    margin-bottom: 12px;
     background-color: #f6f6f6;
     outline: none;
     border-radius: 8px;
     padding: 13px;
-    color: #a262ad;
+    color: #6262ad;
     letter-spacing: 2px;
     border: none;
     cursor: pointer;
 }
 
 .form-box button:hover {
-    background-color: #a262ad;
+    background-color: #6262ad;
     color: #f6f6f6;
     transition: background-color 0.5s ease;
 }
@@ -152,21 +177,24 @@ input:focus::placeholder {
 }
 
 .con-box span {
-    color: #d3b7d8;
+    color: #bcb7d8;
 }
 
 .con-box img {
+    border-radius: 100%;
+    overflow: hidden;
     width: 150px;
     height: 150px;
     opacity: 0.9;
-    margin: 40px 0;
+    margin: 20px 0;
 }
 
 .con-box button {
-    margin-top: 3%;
+    margin-top: 2%;
+    margin-bottom: 2%;
     background-color: #fff;
-    color: #a262ad;
-    border: 1px solid #d3b7d8;
+    color: #6262ad;
+    border: 1px solid #bcb7d8;
     padding: 6px 10px;
     border-radius: 5px;
     letter-spacing: 1px;
@@ -175,6 +203,7 @@ input:focus::placeholder {
 }
 
 .con-box button:hover {
-    background-color: #d3b7d8;
+    background-color: #bcb7d8;
     color: #fff;
 }
+
