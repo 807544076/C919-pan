@@ -9,7 +9,7 @@ def index():
 
 @pages.route('/login')
 def login():
-    return render_template('template.html',pageName='login')
+    return render_template('login.html')
 
 @pages.route('/register')
 def register():
