@@ -15,7 +15,7 @@
             <!-- 注册 -->
             <div class="register-box hidden">
                 <h1>register</h1>
-                <form method="post" action="{{url_for('testpage_register')}}">
+                <form method="post" action="{{url_for('testpage_register')}}" class="register-box">
                     <input type="text" placeholder="用户名" value="{{request.form['username']}}" name="username">
                     <input type="email" placeholder="邮箱" value="{{request.form['email']}}" name="email">
                     <input type="password" placeholder="请输入密码" value="{{request.form['password']}}" name="password">
@@ -26,7 +26,7 @@
             <!-- 登录 -->
             <div class="login-box ">
                 <h1>login</h1>
-                <form method="post" action="{{url_for('testpage_login')}}">
+                <form method="post" action="{{url_for('testpage_login')}}" class="login-box">
                     <input type="text" placeholder="用户名" value="{{request.form['username']}}" name="username">
                     <input type="password" placeholder="密码" value="{{request.form['password']}}" name="password">
                     <button type="submit">登录</button>   
