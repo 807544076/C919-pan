@@ -19,6 +19,24 @@ def register():
 def forgot():
     return render_template('template.html',pageName='forgot')
 
+@pages.route('/testpage_register',methods=['GET','POST'])
+def testpage_register():
+    if request.method=='POST':
+        for item in request.form:
+            print(request.form[item])
+        return redirect(url_for('index'))
+    else:
+        return render_template('login.html')
+
+@pages.route('/testpage_login',methods=['GET','POST'])
+def testpage_login():
+    if request.method=='POST':
+        for item in request.form:
+            print(request.form[item])
+        return redirect(url_for('index'))
+    else:
+        return render_template('login.html')
+
 @pages.errorhandler(404)
 def page_not_found(error):
     return render_template('template.html',pageName='404')
