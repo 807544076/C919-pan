@@ -8,6 +8,7 @@ flask = "*"
 Jinja2 = "*"
 flask_wtf = "*"
 wtforms = "*"
+PyMySQL = "*"
 
 [dev-packages]
 
