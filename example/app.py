@@ -1,5 +1,5 @@
 from flask import Flask,render_template,request,redirect,url_for
-from form import LoginForm,RegisterForm,PasswordForm
+from linksql import C919SQL
 
 pages=Flask(__name__)
 
@@ -22,8 +22,10 @@ def forgot():
 @pages.route('/testpage_register',methods=['GET','POST'])
 def testpage_register():
     if request.method=='POST':
-        for item in request.form:
-            print(request.form[item])
+        testSQL=C919SQL()
+        testSQL.admin_link()
+        testSQL.userCreate(request.form['username'],request.form['email'],request.form['password'])
+        testSQL.end_link()
         return redirect(url_for('index'))
     else:
         return render_template('login.html')
