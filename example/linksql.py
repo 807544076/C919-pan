@@ -43,7 +43,7 @@ class C919SQL:
         if not self.islink:
             print('error! not linked yet')
         else:
-            sql = 'insert into user(username,email,password) values("%s","%s","%s")' % (username,email,password)
+            sql = 'insert into user_info(username,email,password) values("%s","%s","%s")' % (username,email,password)
             self.__cursor.execute(sql)
             self.__db.commit()
             print('create successfully')
