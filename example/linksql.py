@@ -38,6 +38,7 @@ class C919SQL:
 
     def search_link(self):
         pass
+<<<<<<< HEAD
     
     def userCreate(self, username,email,password):
         if not self.islink:
@@ -47,3 +48,6 @@ class C919SQL:
             self.__cursor.execute(sql)
             self.__db.commit()
             print('create successfully')
+=======
+
+>>>>>>> b08c4bf (temporary)
