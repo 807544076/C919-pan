@@ -207,3 +207,10 @@ input:focus::placeholder {
     color: #fff;
 }
 
+#password_strong {
+    background-color: white;
+    width: 80px;
+    text-align: center;
+    height: 25px;
+    border: 1px solid black
+}

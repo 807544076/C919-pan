@@ -37,7 +37,16 @@ class C919SQL:
             print('close')
 
     def search_link(self):
-        pass
+        if self.islink:
+            print('already linked')
+        else:
+            self.__db = pymysql.connect(host='localhost',
+                         user = 'c919select',
+                         password = 'c919select',
+                         database = 'c919db')   # 账号密码仅做参考
+            self.__cursor = self.__db.cursor()
+            print('success')
+            self.islink = True
 
     def userCreate(self, username,email,password):
         if not self.islink:
@@ -58,3 +67,28 @@ class C919SQL:
             self.__cursor = self.__db.cursor()
             print('success')
             self.islink = True
+
+    def select_email(self, email):
+        if not self.islink:
+            print('error! not linked yet')
+        else:
+            sql = "select email from user_info where email = '" + email + "'"
+            self.__cursor.execute(sql)
+            result = self.__cursor.fetchall()
+            if result:
+                return True
+            else:
+                return False
+
+    def select_password(self, password):
+        if not self.islink:
+            print('error! not linked yet')
+        else:
+            sql = "select email from user_info where password = '" + password + "'"
+            self.__cursor.execute(sql)
+            result = self.__cursor.fetchall()
+            if result:
+                return True
+            else:
+                return False
+
