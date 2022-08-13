@@ -1,0 +1,18 @@
+<body>
+    <div class="email-box">
+        <div class="email-form">
+            <form method="post" action="{{url_for('email_check')}}" class="email-box" name="emailForm">
+                <input type="text" placeholder="请输入验证码" value="{{request.form['check']}}" name="check" id="check">
+                <button type="submit">验证</button>
+            </form>
+        </div>
+    </div>
+    {% for message in get_flashed_messages() %} {% if message%}
+    <p hidden id="flash_mes">{{ message }} </p>
+    {% endif %} {% endfor %}
+</body>
+
+
+<link rel="stylesheet" href="/static/css/check.css">
+<script src="/static/js/check.js"></script>
+<script src="/static/js/jquery-3.2.1.slim.min.js"></script>
