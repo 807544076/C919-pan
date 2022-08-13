@@ -34,6 +34,7 @@ class C919SQL:
             self.__db.close()
             self.__cursor = None
             self.__db = None
+            self.islink = False;
             print('close')
 
     def search_link(self):
@@ -48,7 +49,7 @@ class C919SQL:
             print('success')
             self.islink = True
 
-    def userCreate(self, username,email,password):
+    def userCreate(self, username, email, password):
         if not self.islink:
             print('error! not linked yet')
         else:
@@ -92,3 +93,11 @@ class C919SQL:
             else:
                 return False
 
+    def select_username(self, email):
+        if not self.islink:
+            print('error! not linked yet')
+        else:
+            sql = "select name from user_info where email = '" + email + "'"
+            self.__cursor.execute(sql)
+            result = self.__cursor.fetchone()
+            return result
