@@ -3,11 +3,21 @@ import linksql
 link = linksql.C919SQL()
 link.root_link('root', 'root')  # 本行修改为自己的 root 账号密码
 
-link.execute("create user c919 identified by 'c919';")
+# 创建数据库
+link.execute("create DATABASE c919db")
+
+# 创建数据库管理员账号
+link.execute("create user c919 identified by 'c919';") # 账号密码仅供参考
 link.execute("grant all privileges on c919db.* to c919@'%';")
+
+# 创建查询账号
+link.execute("create user c919select identified by 'c919select';")
+link.execute("grant select on c919db.* to c919select@'%';")
+
 link.execute("flush privileges;")
 link.execute("use c919db;")
 
+# 创建用户信息表
 link.execute("""
 CREATE TABLE `c919db`.`user_info` (
   `uid` INT NOT NULL,
@@ -39,7 +49,7 @@ BEGIN
     declare randid int;
     label:
     while true do
-        set randid = (select floor(1 + rand() * 9999));
+        set randid = (select floor(100000 + rand() * 999999999));
         if randid not in (select uid from user_info) then
             leave label;
         end if;
