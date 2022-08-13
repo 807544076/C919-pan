@@ -39,28 +39,25 @@ $login.click(function() {
     })
     // 注册前端慢哈希
 function SetRegister() {
-    hash_email = document.getElementById('r_email').value;
     hash_password = document.getElementById('r_password').value;
     for (var i = 0; i < 10; i++) {
-        hash_email = GetHashPwd('c919_cuc', hash_email);
         hash_password = GetHashPwd(document.getElementById('r_email').value, hash_password);
     }
-    document.getElementById('r_email').value = hash_email
     document.getElementById('r_password').value = hash_password
+    $('.register-box').submit();
     return true;
 }
 // 登录前端慢哈希
 function SetLogin() {
-    hash_email = document.getElementById('l_email').value;
     hash_password = document.getElementById('l_password').value;
     for (var i = 0; i < 10; i++) {
-        hash_email = GetHashPwd('c919_cuc', hash_email);
         hash_password = GetHashPwd(document.getElementById('l_email').value, hash_password);
     }
-    document.getElementById('l_email').value = hash_email
     document.getElementById('l_password').value = hash_password
+    $('.login-box').submit();
     return true;
 }
+
 
 // 密码重复检测
 $('#r_password_again').on('change', function() { //输入框内容改变时发生的事件通用版

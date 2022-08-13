@@ -15,22 +15,22 @@
             <!-- 注册 -->
             <div class="register-box hidden">
                 <h1>register</h1>
-                <form method="post" action="{{url_for('testpage_register')}}" class="register-box" name="registerForm" onsubmit="SetRegister();">
+                <form method="post" action="{{url_for('testpage_register')}}" class="register-box" name="registerForm">
                     <input type="text" placeholder="用户名" value="{{request.form['username']}}" name="username" id="r_username">
                     <input type="email" placeholder="邮箱" value="{{request.form['email']}}" name="email" id="r_email" hidden>
                     <input type="password" placeholder="请输入密码" value="{{request.form['password']}}" name="password" id="r_password" hidden>
                     <span id="password_strong" hidden>...</span>
                     <input type="password" placeholder="确认密码" value="{{request.form['passwordAgain']}}" name="passwordAgain" id="r_password_again" onchange="changePassword();" hidden>
-                    <button type="submit" hidden id="r_submit">注册</button>
+                    <button type="button" hidden id="r_submit" onclick="SetRegister();">注册</button>
                 </form>
             </div>
             <!-- 登录 -->
             <div class="login-box ">
                 <h1>login</h1>
-                <form method="post" action="{{url_for('testpage_login')}}" class="login-box" name="loginForm" onsubmit="SetLogin();">
+                <form method="post" action="{{url_for('testpage_login')}}" class="login-box" name="loginForm">
                     <input type="text" placeholder="邮箱 / 电话号码" value="{{request.form['username']}}" name="email" id="l_email">
                     <input type="password" placeholder="密码" value="{{request.form['password']}}" name="password" id="l_password">
-                    <button type="submit">登录</button>
+                    <button type="button" onclick="SetLogin();">登录</button>
                 </form>
                 <p>找回密码</p>
                 <!--需要添加找回密码网址-->

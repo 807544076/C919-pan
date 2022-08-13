@@ -15,7 +15,7 @@ def sendMail(message, Subject, sender_show, recipient_show, to_addrs, cc_show=''
     user = 'c919_register@c919xxq.wecom.work'
     password = 'hDWMAg2uYSnhBhAv'
     # 邮件内容
-    msg = MIMEText(message, 'plain', _charset="utf-8")
+    msg = MIMEText(message, 'html', _charset="utf-8")
     # 邮件主题描述
     msg["Subject"] = Subject
     # 发件人显示，不起实际作用
@@ -31,15 +31,15 @@ def sendMail(message, Subject, sender_show, recipient_show, to_addrs, cc_show=''
         smtp.sendmail(from_addr=user, to_addrs=to_addrs.split(','), msg=msg.as_string())
 
 
-if __name__ == '__main__':
-    message = """
-    <h1>这里是 c919 指挥部</h1>
-    """
-    Subject = '主题测试'
-    # 显示发送人
-    sender_show = 'c919_python'
-    # 显示收件人
-    recipient_show = '1939866964'
-    # 实际发给的收件人
-    to_addrs = '1939866964@qq.com'
-    sendMail(message, Subject, sender_show, recipient_show, to_addrs)
+# if __name__ == '__main__':
+#     message = """
+#     <h1>这里是 c919 指挥部</h1>
+#     """
+#     Subject = '主题测试'
+#     # 显示发送人
+#     sender_show = 'c919_python'
+#     # 显示收件人
+#     recipient_show = '1939866964'
+#     # 实际发给的收件人
+#     to_addrs = '1939866964@qq.com'
+#     sendMail(message, Subject, sender_show, recipient_show, to_addrs)
