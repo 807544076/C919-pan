@@ -18,6 +18,7 @@ stages:
         displayName: pipenv安装与启用
         pythonVersion: '3.9'
         commands:
+          - pwd
           - cd ./example
           - pip install pipenv
           - ln -s $(find / -name pipenv) /usr/bin/pipenv
@@ -27,7 +28,8 @@ stages:
           - name: pipenvTemp
             path:
               - ./
-        strategy: {}
+        strategy:
+          retry: '3'
   - name: release
     displayName: 发布
     strategy: naturally
@@ -47,4 +49,4 @@ stages:
         caches: []
         notify: []
         strategy:
-          retry: '0'
+          retry: '3'
