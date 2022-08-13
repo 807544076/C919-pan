@@ -3,6 +3,7 @@ from linksql import C919SQL
 import nacl.encoding
 import nacl.hash
 import time
+import random
 
 certFile='./cert/selfsigned.crt'
 keyFile='./cert/selfsigned.key'
@@ -14,6 +15,11 @@ digest = HASHER(hash_msg, encoder=nacl.encoding.HexEncoder)
 pages=Flask(__name__)
 pages.secret_key = digest
 
+r_name = ''
+r_email = ''
+r_password = ''
+check_num = 0
+
 
 @pages.route('/')
 def index():
@@ -24,33 +30,29 @@ def index():
 def login():
     return render_template('login.html')
 
-# @pages.route('/register')
-# def register():
-#     return render_template('template.html',pageName='register')
-
 
 @pages.route('/forgot')
 def forgot():
     return render_template('template.html',pageName='forgot')
 
 
-@pages.route('/testpage_register',methods=['GET','POST'])
+@pages.route('/testpage_register',methods=['GET', 'POST'])
 def testpage_register():
     if request.method=='POST':
-        testSQL=C919SQL()
-        testSQL.admin_link()
         bytes_email = bytes(request.form['email'], 'utf-8')
         bytes_password = bytes(request.form['password'], 'utf-8')
-        testSQL.userCreate(request.form['username'], HASHER(bytes_email, encoder=nacl.encoding.HexEncoder).decode('utf-8'), HASHER(bytes_password, encoder=nacl.encoding.HexEncoder).decode('utf-8'))
-        testSQL.end_link()
-        return redirect(url_for('index'))
+        r_name = request.form['username']
+        r_email = HASHER(bytes_email, encoder=nacl.encoding.HexEncoder).decode('utf-8')
+        r_password = HASHER(bytes_password, encoder=nacl.encoding.HexEncoder).decode('utf-8')
+        check_num = random.randint(100000, 999999)
+        return redirect(url_for('email_check'))
     else:
         return render_template('login.html')
 
 
-@pages.route('/testpage_login',methods=['GET','POST'])
+@pages.route('/testpage_login', methods=['GET', 'POST'])
 def testpage_login():
-    if request.method=='POST':
+    if request.method == 'POST':
         bytes_email = bytes(request.form['email'], 'utf-8')
         bytes_password = bytes(request.form['password'], 'utf-8')
         selectSQL = C919SQL()
@@ -66,6 +68,14 @@ def testpage_login():
             return redirect(url_for('login'))
     else:
         return render_template('login.html')
+
+
+@pages.route('/email_check', methods=['GET', 'POST'])
+def email_check():
+    if request.method == 'POST':
+        pass
+    else:
+        return render_template('email_check.html')
 
 
 @pages.errorhandler(404)
