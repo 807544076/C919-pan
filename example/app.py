@@ -76,20 +76,10 @@ def testpage_register():
 
 @pages.route('/testpage_login', methods=['GET', 'POST'])
 def testpage_login():
-    if request.method == 'POST':
-        bytes_email = bytes(request.form['email'], 'utf-8')
-        bytes_password = bytes(request.form['password'], 'utf-8')
-        selectSQL = C919SQL()
-        selectSQL.search_link()
-        if selectSQL.select_email(HASHER(bytes_email, encoder=nacl.encoding.HexEncoder).decode('utf-8')):
-            if selectSQL.select_password(HASHER(bytes_password, encoder=nacl.encoding.HexEncoder).decode('utf-8')):
-                return render_template('index.html', userName=selectSQL.select_username(HASHER(bytes_email, encoder=nacl.encoding.HexEncoder).decode('utf-8'))[0])
-            else:
-                flash('密码错误！')
-                return redirect(url_for('login'))
-        else:
-            flash('用户不存在！')
-            return redirect(url_for('login'))
+    if request.method=='POST':
+        for item in request.form:
+            print(request.form[item])
+        return redirect(url_for('index'))
     else:
         return render_template('login.html')
 
