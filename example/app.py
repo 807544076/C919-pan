@@ -4,6 +4,9 @@ import nacl.encoding
 import nacl.hash
 import time
 
+certFile='./cert/selfsigned.crt'
+keyFile='./cert/selfsigned.key'
+
 HASHER = nacl.hash.sha512
 hash_msg = bytes(str(time.time()), 'utf-8')
 digest = HASHER(hash_msg, encoder=nacl.encoding.HexEncoder)
@@ -70,4 +73,4 @@ def page_not_found(error):
     return render_template('404.html')
 
 if __name__ == '__main__':
-    pages.run(debug=True)
+    pages.run(debug=True,ssl_context=(certFile,keyFile),port=443)
