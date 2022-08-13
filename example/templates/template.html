@@ -1,8 +1,7 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-    <head>
-        <title>{{pageName}}</title>
-    </head>
-    <body>
-        <h1>this is {{pageName}} page</h1>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}{{pageName}}{% endblock %}
+
+{% block body %}
+<h1>这里是{{pageName}}页面</h1>
+{% endblock %}

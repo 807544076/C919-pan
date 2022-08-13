@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block title %}Page Not Found{% endblock %}
+
+{% block body %}
+<h1>404错误:</h1>
+<p>你访问的页面不存在耶</p>
+<a href="{{url_for('index')}}">点我返回主页面</a>
+{% endblock %}
