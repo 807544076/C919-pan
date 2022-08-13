@@ -35,13 +35,13 @@ def testpage_login():
     if request.method=='POST':
         for item in request.form:
             print(request.form[item])
-        return redirect(url_for('index'))
+        return redirect(url_for('index',userName=request.form['username']))
     else:
         return render_template('login.html')
 
 @pages.errorhandler(404)
 def page_not_found(error):
-    return render_template('template.html',pageName='404')
+    return render_template('404.html')
 
 if __name__ == '__main__':
     pages.run(debug=True)
