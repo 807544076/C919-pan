@@ -20,6 +20,7 @@ stages:
         commands:
           - cd ./example
           - pip install pipenv
+          - ln -s $(find / -name pipenv) /usr/bin/pipenv
           - pipenv install
           - pipenv shell
         artifacts:
