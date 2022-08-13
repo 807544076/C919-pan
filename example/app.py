@@ -50,7 +50,7 @@ def testpage_login():
     if request.method=='POST':
         for item in request.form:
             print(request.form[item])
-        return redirect(url_for('index'))
+        return redirect(url_for('index',userName=request.form['username']))
     else:
         return render_template('login.html')
 
