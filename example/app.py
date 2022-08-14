@@ -22,8 +22,17 @@ start_time = [0]
 
 
 @pages.route('/')
+def to_index():
+    return redirect(url_for('index'))
+
+
+@pages.route('/index')
 def index():
-    return render_template('index.html')
+    if request.args.get('userName'):
+        username = request.args.get('userName')
+        return render_template('index.html', userName=username)
+    else:
+        return render_template('index.html')
 
 
 @pages.route('/login')
@@ -83,7 +92,7 @@ def testpage_login():
         selectSQL.search_link()
         if selectSQL.select_email(HASHER(bytes_email, encoder=nacl.encoding.HexEncoder).decode('utf-8')):
             if selectSQL.select_password(HASHER(bytes_password, encoder=nacl.encoding.HexEncoder).decode('utf-8')):
-                return render_template('index.html', userName=selectSQL.select_username(HASHER(bytes_email, encoder=nacl.encoding.HexEncoder).decode('utf-8'))[0])
+                return redirect(url_for('index', userName=selectSQL.select_username(HASHER(bytes_email, encoder=nacl.encoding.HexEncoder).decode('utf-8'))[0]))
             else:
                 flash('密码错误！')
                 return redirect(url_for('login'))
@@ -106,7 +115,7 @@ def email_check():
             sql.admin_link()
             sql.userCreate(r_info[0], r_info[1], r_info[2])
             sql.end_link()
-            return render_template('index.html', userName=r_info[0])
+            return redirect(url_for('index', userName=r_info[0]))
         else:
             flash('验证码错误！请重新输入')
             print(request.form['check'])
