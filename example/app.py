@@ -18,7 +18,7 @@ digest = HASHER(hash_msg, encoder=nacl.encoding.HexEncoder)
 pages=Flask(__name__)
 pages.secret_key = digest
 
-pages.config['SESSION_PERMANENT'] = False
+pages.config['SESSION_PERMANENT'] = True
 pages.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=12)
 pages.config['SESSION_TYPE'] = 'filesystem'
 Session(pages)
