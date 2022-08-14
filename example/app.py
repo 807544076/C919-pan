@@ -47,8 +47,40 @@ def login():
 
 @pages.route('/forgot')
 def forgot():
-    return render_template('template.html',pageName='forgot')
+    if request.method == 'POST':
+        email = request.form['email']
+        if email == '':
+            flash('请输入邮箱')
+            return redirect(url_for('forgot'))
+        else:
+            sql = C919SQL()
+            if sql.check_email(email):
+                flash('已发送验证邮件，请查收')
+                sendMail(email)
+                return redirect(url_for('set_password'))
+            else:
+                flash('邮箱未注册')
+                return redirect(url_for('forgot'))
+    return render_template('forgot.html', pageName='forgot')
 
+
+@pages.route('/set_password')
+def setpassword():
+    if request.method == 'POST':
+        passwd = request.form['passwd']
+        if passwd == '':
+            flash('请输入密码')
+            return redirect(url_for('set_password'))
+        else:
+            sql = C919SQL()
+            if sql.set_password(passwd):
+                flash('密码设置成功')
+                return redirect(url_for('login'))
+            else:
+                flash('密码设置失败')
+                return redirect(url_for('set_password'))
+        return redirect(url_for('login'))
+    return render_template('set_password.html', pageName='setpassword')
 
 @pages.route('/testpage_register',methods=['GET', 'POST'])
 def testpage_register():
