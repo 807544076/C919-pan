@@ -1,123 +1,37 @@
 
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
-    <style>
-        .main{
-            width: 330px;
-            margin: 0 auto;
-            background-color: #BCB7D9;
-            border-radius: 10px;
-        }
-        .demo-ruleForm{
-            width: 100%;
-            padding: 20px 10px;
-        }
-        ._input{
-            height: 30px;
-            width: 250px;
-        }
-        .parent{
-            position: relative;
-        }
-        .children0{
-            position: absolute;
-            height: 30px;
-            background-color:#BCB7D9;
-            right: 25px;
-            top:6px;
-            line-height: 30px;
-            font-size:8px;
-            border: 1px solid;
-            opacity: .5;
-            border-radius: 3px;
-        }
-
-    </style>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>forget passwd</title>
+    <link rel="stylesheet" href="./css/forget.css">
 </head>
+
 <body>
-<div id="app">
-    <div class="main">
-        <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="60px" class="demo-ruleForm">
-            <el-form-item label="邮箱" prop="pass">
-                <el-input type="password" v-model="ruleForm.pass" autocomplete="off" class="_input"></el-input>
-            </el-form-item>
-            <el-form-item label="验证码" prop="age">
-                <el-input v-model.number="ruleForm.age" class="_input parent">
-                </el-input>
-                <div class="children0">获取验证码</div>
-            </el-form-item>
-            <el-form-item>
-                <el-button type="primary" @click="submitForm('ruleForm')" style="width: 200px">下一步</el-button>
-            </el-form-item>
-        </el-form>
-    </div>
-    <el-dialog title="找回新密码" :visible.sync="dialogFormVisible">
-        <div class="main">
-            <el-form :model="Form" status-icon :rules="rules" ref="Form" label-width="60px" class="demo-ruleForm">
-                <el-form-item label="新密码" prop="pass">
-                    <el-input type="password" v-model="ruleForm.pass" autocomplete="off" class="_input"></el-input>
-                </el-form-item>
-                <el-form-item label="请再输一次" prop="age">
-                    <el-input v-model.number="ruleForm.age" class="_input parent">
-                    </el-input>
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" @click="submitForm('ruleForm')" style="width: 200px">提交</el-button>
-                </el-form-item>
-            </el-form>
+<div class="container">
+    <div class="forget-box">
+        <div class="forget-box-header">
+            <h1>{{  }}</h1>
+            <p>Please enter your email address below to reset your password.</p>
         </div>
-</el-dialog>
+        <div>
+            <form action="forget"method="post">
+                <div class="form-group">
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Input your Email">
+                </div>
+                <div class="form-box">
+                   <button >Submit</button>
+
+                </div>
+            </form>
+        </div>
+
+    </div>
 </div>
+
 </body>
-<!-- import Vue before Element -->
-<script src="./vue.js"></script>
-<!-- import JavaScript -->
-<script src="https://unpkg.com/element-ui/lib/index.js"></script>
-<script>
-    new Vue({
-        el: '#app',
-        data(){
-            return {
-                ruleForm: {
-                    pass: '',
-                    checkPass: '',
-                    age: ''
-                },
-                dialogFormVisible: false,
-                Form: {
-                    name: '',
-                    region: '',
-                    date1: '',
-                    date2: '',
-                    delivery: false,
-                    type: [],
-                    resource: '',
-                    desc: ''
-                },
-                formLabelWidth: '300px'
-                }
-            },
-        methods: {
-            submitForm(formName) {
-                this.$refs[formName].validate((valid) => {
-                    if (valid) {
-                        this.dialogFormVisible = true
-                    } else {
-                        console.log('error submit!!');
-                        return false;
-                    }
-                });
 
-            },
-            resetForm(formName) {
-                this.$refs[formName].resetFields();
-
-            }
-        }
-
-    })
-</script>
 </html>
