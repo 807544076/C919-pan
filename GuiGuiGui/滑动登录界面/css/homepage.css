@@ -1,0 +1,41 @@
+* {
+    /* 全局配置 */
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    background: linear-gradient(200deg, #cbdcf5, #fce7ef);
+    flex-direction: column;
+    justify-content: center;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    /* 大写 */
+    text-transform: uppercase;
+    color: #fff;
+    /* 字间距 */
+    letter-spacing: 5px;
+}
+
+a {
+    width: 20%;
+    margin-top: 12px;
+    margin-bottom: 12px;
+    background-color: #f6f6f6;
+    outline: none;
+    border-radius: 8px;
+    padding: 13px;
+    color: #6262ad;
+    letter-spacing: 2px;
+    border: none;
+    cursor: pointer;
+}
+p {
+    text-align: center;
+}

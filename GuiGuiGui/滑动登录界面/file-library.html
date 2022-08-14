@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C919作战区</title>
+    <link rel="stylesheet" href="./css/index.css">
+</head>
+<!--根界面-->
+<body>
+    <!--侧边栏-->
+    <div class="l-navbar" id="navbar">
+        <nav class="nav">
+            <div>
+                <div class="nav_brand">
+                    <!-- <ion-icon name="menu-outline" class="nav_toggle" id="nav_toggle"></ion-icon> -->
+                    <ion-icon name="menu-outline" class="nav_toggle" id="nav-toggle"></ion-icon>
+                    <a href="#" class="nav_logo">C919作战区</a>
+                </div>
+                <div class="nav_list">
+                    <a href="./file-library.html" class="nav_link active">
+                        <ion-icon name="home-outline" class="nav_icon" ></ion-icon>
+                        <span class="nav_name">主页</span>
+                    </a>
+                    <a href="./index.html" class="nav_link">
+                        <ion-icon name="cloud-upload" class="nav_icon" ></ion-icon>
+                        <span class="nav_name">文件上传</span>
+                    </a>
+                    <a href="./file-library.html" class="nav_link">
+                        <ion-icon name="folder-outline" class="nav_icon" ></ion-icon>
+                        <span class="nav_name">文件库</span>
+                    </a>
+                </div>
+            </div>
+            <div class="nav_list">
+            <a href="修改密码网址" class="nav_link">
+                <ion-icon name="settings-outline" class="nav_icon" ></ion-icon>
+                <span class="nav_name">修改密码</span>
+            </a>
+            <a href="登录界面网址" class="nav_link">
+                <ion-icon name="log-out-outline" class="nav_icon" ></ion-icon>
+                <span class="nav_name">退出登陆</span>
+            </a>
+            </div>
+        </nav>
+    </div>
+    <!--其他：数据库、上传文件等布局-->
+    <div class="form">
+        <div class="tips">
+            <h1>C919作战区</h1>
+        </div>
+        <div class="resource-list-wrapper ng-scope" before-controller="
+        fileTypeMap={
+         'image': '图片',
+         'document': '文档',
+         'file': '其它',
+         'link': '链接',};
+        currentUserId = 3676823; currentIsAdmin = false;
+        canClip = false;
+        nonSupportedImportDocumentMessage = '此文档不支持导入';clipText = '剪辑';
+        isGoogleDriveIntegrationEnable = 'False';
+        clipProvider = 'LRP';
+        getClipingProgressUrl = '/media-process/media-tasks?no-intercept=true';
+        isVideoClipEnable= false;
+        isShareResourceEnable = true;
+        orgCode = 'zgcm';
+        isOpenUniversity=false;
+        isStudent = 'Student' == 'Student';
+        lrpServerAddress = '';
+        isJLU='CUC' == 'JLU';" ng-controller="FileListCtrl" ng-init="
+            operationSuccessMessage='操作成功';
+            operationFailMessage='操作失败';
+            deleteConfirmMessage='是否确认删除文件？';
+            deleteWithActivityConfirmMessage='文件已关联学习活动，删除后学习活动中的文件也将删除';
+            deleteWithShareConfirmMessage='文件已被分享到资源平台，删除后分享的资源也将被删除';
+            deleteWithActivityAndShareConfirmMessage='文件已分享到资源平台，删除后会影响展示';
+            batchDeleteWithActivityAndShareConfirmMessage='部分文件已关联学习活动或分享到资源平台，删除后会影响展示，确认删除吗？';
+            batchDeleteWithActivityConfirmMessage='部分文件已关联学习活动，删除后学习活动中的文件也将删除，确认删除吗？';
+            batchDeleteWithShareConfirmMessage='部分文件已被分享到资源平台，删除后分享的资源也将被删除，确认删除吗？';
+            batchZipDownloadConfirmMessage='此资源为限制下载资源';
+            uploadZeroSizeFileErrorMessage='请勿上传 0 Bytes 文件';
+            uploadSizeLimitErrorMessage='抱歉，文件大小超出限制';
+            uploadFileFormatLimitErrorMessage='抱歉，不支持此文件类型';
+            shareResourcePage = 'upload';">
+            <!--文件库-->
+            <div class="resource-list-crumbs">
+                <!-- ngIf: path && path.length > 0 -->
+                <a ng-click="changePath()" ng-bind="fileTypeMap[$root.ui.fileType]" class="ng-binding">全部</a>
+                <!-- ngIf: path.length > 4 -->
+                <!-- ngRepeat: upload in path -->
+            </div>
+            <div class="menu-area" ng-init="video_storage='';">
+                <ul class="button-group" fix-ie-min-width="">
+                    <li class="operations">
+                        <div class="batch-operation-button-wrapper">
+                            <a class="button more-button narrow batch-button" ng-disabled="!hasFileSelected()" toggle-dropdown="" disabled="disabled">
+                                <i class="font font-batch-operation"></i>
+                                <span>批量操作</span>
+                            </a>
+                            <div class="dropdown-list zh-CN ng-hide hide" ng-show="hasFileSelected()">
+                                <ul>
+                                    <li>
+                                        <a confirm-dialog="" get-confirm-message="getBatchDeleteMessage()" ng-click="batchDelete()" class="ng-isolate-scope">
+                                            <i class="font font-batch-operation-delete"></i>
+                                            <span>删除</span>
+                                        </a>
+                                    </li>
+                                    <!-- ngIf: ['scorm'].indexOf(ui.fileType) == -1 --><li ng-if="['scorm'].indexOf(ui.fileType) == -1" class="ng-scope">
+                                        <a ng-click="navToZipUrl(video_storage)">
+                                            <i class="font font-batch-operation-zip batch-download"></i>
+                                            <span>打包下载</span>
+                                        </a>
+                                    </li><!-- end ngIf: ['scorm'].indexOf(ui.fileType) == -1 -->
+                                    <li>
+                                        <a data-params="getSelectedIds()" reveal-modal="upload-move">
+                                            <i class="font font-move-file move-font"></i>
+                                            <span>移动到</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a ng-click="batchShareResource()">
+                                            <i class="font font-batch-share"></i>
+                                            <span>分享</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                            <div class="add-file-button-wrapper">
+                            <a class="button more-button narrow create" href="javascript:void(0)" toggle-dropdown="">
+                                <i class="font font-add-new-elem"></i>
+                                <span>新增</span>
+                            </a>
+                            <div class="dropdown-list zh-CN hide">
+                                <ul>
+                                    <li>
+                                        <a ng-click="openFilesUploader()">
+                                            <span>文件</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a ng-click="openLinkEditingPopup()">
+                                            <span>链接</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a reveal-modal="upload-edit">
+                                            <span>文件夹</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <a class="button" href="/shared-resource/user/3676823/track-user-resource" target="_blank">
+                            <span>我的首页</span>
+                        </a>
+                    </li>
+                    <!-- ngIf: path && path.length < 1 --><li class="filter-wrapper ng-scope" ng-if="path &amp;&amp; path.length < 1">
+                        <span>类型:</span>
+                        <a href="javascript:void(0)" toggle-dropdown="" class="">
+                            <span ng-bind="ui.fileTypeName" class="ng-binding">全部</span>
+                            <i class="icon icon-arrow-down"></i>
+                        </a>
+                        <div class="dropdown-list zh-CN hide">
+                            <ul>
+                                <li>
+                                    <a ng-click="changeFileType('all')">
+                                        <span>全部</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a ng-click="changeFileType('image')">
+                                        <span>图片</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a ng-click="changeFileType('document')">
+                                        <span>文档</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a ng-click="changeFileType('link')">
+                                        <span>链接</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a ng-click="changeFileType('file')">
+                                        <span>其它</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </li><!-- end ngIf: path && path.length < 1 -->
+                    <li class="right">
+                        <div class="search-key">
+                            <input type="text" name="keyword" ng-model="ui.keyword" enter-press="search()" wg-placeholder="关键字" class="ng-pristine ng-untouched ng-valid ng-empty" placeholder="关键字">
+                            <span class="icon-delete-thumb" ng-click="clearCondition()"></span>
+                        </div>
+                        <div class="search-btn">
+                            <a class="button search" ng-click="search()">
+                                <span>搜索</span>
+                            </a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <div class="loading-in-element ng-hide" ng-show="contentLoaded">
+                <div class="spinner"></div>
+            </div>
+            <!-- ngIf: myFiles.length > 0 && ui.fileType != 'image' --><div class="resource-list ng-scope" ng-if="myFiles.length > 0 &amp;&amp; ui.fileType != 'image'">
+                <div class="list-header row">
+                <div class="large-9 column">
+                    <input type="checkbox" class="left" ng-checked="checkAllSelected()" ng-click="switchAll()">
+                    <span class="left">资源名</span>
+                    <span class="sort-operation left" ng-click="changeSort('name')">
+                    <i class="font font-up" ng-class="{'unselected': ui.predicate=='name' &amp;&amp; ui.reverse}"></i>
+                    <i class="font font-down" ng-class="{'unselected': ui.predicate=='name' &amp;&amp; !ui.reverse}"></i>
+                    </span>
+                </div>
+                <div class="large-6 column">
+                    <span class="left">上传时间</span>
+                    <span class="sort-operation left" ng-click="changeSort('created_at')">
+                    <i class="font font-up unselected" ng-class="{'unselected': ui.predicate=='created_at' &amp;&amp; ui.reverse}"></i>
+                    <i class="font font-down" ng-class="{'unselected': ui.predicate=='created_at' &amp;&amp; !ui.reverse}"></i>
+                    </span>
+                </div>
+                <!-- ngIf: !(isVideoClipEnable && canClip) --><div class="large-5 column ng-scope" ng-if="!(isVideoClipEnable &amp;&amp; canClip)">
+                    <!-- ngIf: ui.fileType != 'scorm' --><span ng-if="ui.fileType != 'scorm'" class="left ng-scope">大小</span><!-- end ngIf: ui.fileType != 'scorm' -->
+                    <!-- ngIf: ui.fileType == 'scorm' -->
+                    <span class="sort-operation left" ng-click="changeSort('size')">
+                    <i class="font font-up" ng-class="{'unselected': ui.predicate=='size' &amp;&amp; ui.reverse}"></i>
+                    <i class="font font-down" ng-class="{'unselected': ui.predicate=='size' &amp;&amp; !ui.reverse}"></i>
+                    </span>
+                </div><!-- end ngIf: !(isVideoClipEnable && canClip) -->
+                <div class="large-5 column end" ng-class="{'end': !(isVideoClipEnable &amp;&amp; canClip)}">
+                    <span class="left">关联处</span>
+                    <span class="sort-operation left" ng-click="changeSort('reference_count')">
+                    <i class="font font-up" ng-class="{'unselected': ui.predicate=='reference_count' &amp;&amp; ui.reverse}"></i>
+                    <i class="font font-down" ng-class="{'unselected': ui.predicate=='reference_count' &amp;&amp; !ui.reverse}"></i>
+                    </span>
+                </div>
+                <!-- ngIf: (isVideoClipEnable && canClip) -->
+                </div>
+                <div class="files">
+                <!-- ngRepeat: upload in myFiles --><div class="resource row ng-scope" ng-repeat="upload in myFiles" id="uploads-2710873">
+                    <!-- ngIf: upload.type != 'folder' --><div ng-mouseleave="hideMoreOperations($event, upload.id)" class="click-able ng-scope" previewer="" reveal-modal="file-previewer" ng-if="upload.type != 'folder'">
+                    <div class="large-9 column left-column">
+                        <input type="checkbox" ng-model="upload.selected" stop-propagation="" class="ng-pristine ng-untouched ng-valid ng-empty">
+                        <div class="index row-index">
+                        <i class="font font-file-document"></i>
+                        </div>
+                        <div class="name-wrapper truncate-text" style="">
+                        <span class="name ng-binding" tipsy="upload.name" ng-bind="upload.name" original-title="123456.jpg">123456.jpg</span>
+                        </div>
+                    </div>
+                    <div class="large-6 column">
+                        <span ng-bind="upload.created_at | datetime" class="ng-binding">2022.07.04 23:45</span>
+                    </div>
+                    <!-- ngIf: !(isVideoClipEnable && canClip) -->
+                    <div class="large-5 column ng-scope" ng-if="!(isVideoClipEnable &amp;&amp; canClip)">
+                        <!-- ngIf: upload.type != 'scorm' && upload.type != 'link' -->
+                        <span ng-if="upload.type != 'scorm' &amp;&amp; upload.type != 'link'" ng-bind="upload.size | humanizeBytes" class="ng-binding ng-scope">1 MB</span>
+                        <!-- end ngIf: upload.type != 'scorm' && upload.type != 'link' -->
+                        <!-- ngIf: upload.type == 'link' -->
+                        <!-- ngIf: upload.type == 'scorm' && upload.status != 'ready' -->
+                        <!-- ngIf: upload.type == 'scorm' && upload.status == 'ready' -->
+                    </div><!-- end ngIf: !(isVideoClipEnable && canClip) -->
+                    <div class="large-5 column" stop-propagation="">
+                        <a class="reference-count ng-binding" ng-bind="upload.reference_count" reveal-modal="upload-reference-detail" data-params="upload.id">1</a>
+                    </div>
+                    <!-- ngIf: (isVideoClipEnable && canClip) -->
+                    <!-- ngIf: upload.selected -->
+                    <!-- ngIf: !upload.selected --><div ng-if="!upload.selected" class="operations large-6 column ng-scope" stop-propagation="">
+                        <a class="move" reveal-modal="upload-move" data-params="upload.id" style="">
+                        <i tipsy-literal="移动到" class="font font-move-file" original-title="移动到"></i>
+                        </a>
+                        <a class="edit" ng-click="editUpload(upload)" style="">
+                        <i tipsy-literal="重命名" class="font font-edit" original-title="重命名"></i>
+                        </a>
+                        <a confirm-dialog="" get-confirm-message="getConfirmMessage(upload)" class="delete ng-isolate-scope" ng-click="delete(upload)" style="">
+                        <i tipsy-literal="删除" class="font font-delete" original-title="删除"></i>
+                        </a>
+                        <!-- ngIf: upload.status != 'uploading' && upload.status !== 'cliping' && upload.status !== 'clip_failed' && (upload.allow_download || upload.type === 'link' || upload.owner_id == currentUserId || currentIsAdmin) --><a class="download ng-scope" ng-href="/api/uploads/2710873/blob" target="_blank" ng-if="upload.status != 'uploading' &amp;&amp; upload.status !== 'cliping' &amp;&amp; upload.status !== 'clip_failed' &amp;&amp; (upload.allow_download || upload.type === 'link' || upload.owner_id == currentUserId || currentIsAdmin)" href="/api/uploads/2710873/blob">
+                        <i tipsy-literal="下载" class="font font-resource-download" original-title="下载"></i>
+                        </a><!-- end ngIf: upload.status != 'uploading' && upload.status !== 'cliping' && upload.status !== 'clip_failed' && (upload.allow_download || upload.type === 'link' || upload.owner_id == currentUserId || currentIsAdmin) -->
+                        <!-- ngIf: upload.status == 'uploading' && (upload.allow_download || upload.owner_id == currentUserId || currentIsAdmin) -->
+                        <!-- ngIf: (upload.type == 'video' && upload.status == 'ready' && isVideoClipEnable && canClip) || (isShareResourceEnable && (!isOpenUniversity || !isStudent )) --><div class="more-operations ng-scope" ng-if="(upload.type == 'video' &amp;&amp; upload.status == 'ready' &amp;&amp; isVideoClipEnable &amp;&amp; canClip) || (isShareResourceEnable &amp;&amp; (!isOpenUniversity || !isStudent ))">
+                        <a class="more-operations-btn" href="javascript:void(0)" onclick="return false;" ng-click="showMoreOperations($event, upload.id)" ng-blur="hideMoreOperations($event, upload.id)" style="">
+                            <i tipsy-literal="更多" class="font font-more-operations" original-title="更多"></i>
+                        </a>
+                        <div class="more-operations-select ng-hide" ng-show="listUi.moreOperations[upload.id].show">
+                            <!-- ngIf: (upload.type == 'video' && upload.status == 'ready' && isVideoClipEnable && canClip) -->
+                            <!-- ngIf: isShareResourceEnable && (!isOpenUniversity || !isStudent) --><a ng-if="isShareResourceEnable &amp;&amp; (!isOpenUniversity || !isStudent)" class="more-operation-item ng-scope" ng-click="shareResource(upload);hideMoreOperations($event, upload.id)" reveal-modal="shared-resource-info-edit">
+                            分享
+                            </a><!-- end ngIf: isShareResourceEnable && (!isOpenUniversity || !isStudent) -->
+                        </div>
+                        </div><!-- end ngIf: (upload.type == 'video' && upload.status == 'ready' && isVideoClipEnable && canClip) || (isShareResourceEnable && (!isOpenUniversity || !isStudent )) -->
+                    </div><!-- end ngIf: !upload.selected -->
+                    </div><!-- end ngIf: upload.type != 'folder' -->
+                    <!-- ngIf: upload.type == 'folder' -->
+                </div>
+                <!-- end ngRepeat: upload in myFiles -->
+                </div>
+                </div>
+                
+                <!-- end ngIf: myFiles.length > 0 && ui.fileType != 'image' -->
+            <!-- ngIf: myFiles.length > 0 && ui.fileType == 'image' -->
+
+            <!-- ngIf: myFiles.length == 0 && !ui.searching -->
+
+            <!-- ngIf: myFiles.length == 0 && ui.searching -->
+
+            <!-- ngIf: result && myFiles.length > 0 -->
+            <div ng-if="result &amp;&amp; myFiles.length > 0" class="ng-scope">
+            <div class="list-pager">
+                <ul>
+                    <li ng-show="pageIndex > 1" class="previous-page-button ng-hide">
+                        <a class="small pager-button button-white" ng-click="changePage(pageIndex-1)">
+                            <span>&lt; 上一页</span>
+                        </a>
+                    </li>
+                    <li class="first-page ng-hide" ng-hide="pageIndex<=1">
+                        <a class="small pager-button button-white ng-binding" ng-bind="1" ng-click="changePage(1)">1</a>
+                    </li>
+                    <li class="ellipsis-pages ng-hide" ng-hide="pageIndex<=1+2">
+                        <span>...</span>
+                    </li>
+                    <li class="preview-page ng-hide" ng-hide="pageIndex<=1+1">
+                        <a class="small pager-button button-white ng-binding" ng-bind="pageIndex-1" ng-click="changePage(pageIndex-1)">0</a>
+                    </li>
+                    <li class="current-page">
+                        <a class="small pager-button button-white active ng-binding" ng-bind="pageIndex">1</a>
+                    </li>
+                    <li class="next-page" ng-hide="pageIndex>=result.pages-1">
+                        <a class="small pager-button button-white ng-binding" ng-bind="pageIndex+1" ng-click="changePage(pageIndex+1)">2</a>
+                    </li>
+                    <li class="ellipsis-pages" ng-hide="pageIndex>=result.pages-2">
+                        <span>...</span>
+                    </li>
+                    <li class="last-page" ng-hide="pageIndex>=result.pages">
+                        <a class="small pager-button button-white ng-binding" ng-bind="result.pages" ng-click="changePage(result.pages)">13</a>
+                    </li>
+                    <li ng-show="pageIndex != result.pages" class="next-page-button">
+                        <a class="small pager-button button-white" ng-click="changePage(pageIndex+1)">
+                            <span>下一页 &gt;</span>
+                        </a>
+                    </li>
+                    <li class="hidden-in-mobile">
+                        <div class="select2-container page-selector">
+                            <div class="select2-container ng-pristine ng-untouched ng-valid ng-not-empty" id="s2id_autogen1" style="visibility: visible;"><a href="javascript:void(0)" class="select2-choice" tabindex="-1">   <span class="select2-chosen" id="select2-chosen-2"><div title="20" class="select2-line-content">20</div></span><abbr class="select2-search-choice-close"></abbr>   <span class="select2-arrow" role="presentation"><b role="presentation"></b></span></a><label for="s2id_autogen2" class="select2-offscreen"></label><input class="select2-focusser select2-offscreen" type="text" aria-haspopup="true" role="button" aria-labelledby="select2-chosen-2" id="s2id_autogen2"><div class="select2-drop select2-display-none select2-drop-without-search select2-with-searchbox">   <div class="select2-search">       <label for="s2id_autogen2_search" class="select2-offscreen"></label>       <input type="text" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" class="select2-input" role="combobox" aria-expanded="true" aria-autocomplete="list" aria-owns="select2-results-2" id="s2id_autogen2_search" placeholder="">   </div>   <ul class="select2-results" role="listbox" id="select2-results-2">   </ul></div></div><select ui-select2="{dropdownCssClass: 'select2-drop-without-search'}" ng-change="updatePageSize(pageSize)" ng-model="pageSize" parse-integer="" class="ng-pristine ng-untouched ng-valid ng-not-empty select2-offscreen" style="visibility: visible;" tabindex="-1" title="">
+                                <!-- ngRepeat: number in pageSizeOptions --><option value="10" ng-repeat="number in pageSizeOptions" ng-bind="number" class="ng-binding ng-scope">10</option><!-- end ngRepeat: number in pageSizeOptions --><option value="20" ng-repeat="number in pageSizeOptions" ng-bind="number" class="ng-binding ng-scope">20</option><!-- end ngRepeat: number in pageSizeOptions --><option value="30" ng-repeat="number in pageSizeOptions" ng-bind="number" class="ng-binding ng-scope">30</option><!-- end ngRepeat: number in pageSizeOptions --><option value="50" ng-repeat="number in pageSizeOptions" ng-bind="number" class="ng-binding ng-scope">50</option><!-- end ngRepeat: number in pageSizeOptions --><option value="100" ng-repeat="number in pageSizeOptions" ng-bind="number" class="ng-binding ng-scope">100</option><!-- end ngRepeat: number in pageSizeOptions -->
+                            </select>
+                        </div>
+                    </li>
+                    <li class="hidden-in-mobile">项/页</li>
+                    <li class="custom-pager hidden-in-mobile">
+                        <span>页码:</span>
+                        <input type="text" name="page" ng-model="ui.pageIndexInput" ng-change="verifyPageIndexInput()" enter-press="changePage(ui.pageIndexInput)" class="ng-pristine ng-untouched ng-valid ng-not-empty">
+                        <a class="button button-white" ng-click="changePage(ui.pageIndexInput)" ng-disabled="!ui.pageIndexInput">Go</a>
+                    </li>
+                </ul>
+            </div>  </div><!-- end ngIf: result && myFiles.length > 0 -->
+
+            <div id="upload-reference-detail" class="popup-area new-popup-area reveal-modal popup-640 overflow-visible ng-scope" data-reveal="" resetable="">
+                <!-- ngIf: popupState.popupOpened -->
+            </div> <div id="myFilesUpload" class="reveal-modal popup-area popup-900 ng-scope" ng-controller="FileEditCtrl" data-reveal="" xmlns="http://www.w3.org/1999/html">
+                <div class="popup-content">
+                    <div class="popup-header">
+                        <!-- ngIf: !ui.isScorm && !ui.embedMaterialType --><span ng-if="!ui.isScorm &amp;&amp; !ui.embedMaterialType" class="ng-scope">上传附件</span><!-- end ngIf: !ui.isScorm && !ui.embedMaterialType -->
+                        <!-- ngIf: ui.isScorm && !ui.embedMaterialType -->
+                        <!-- ngIf: ui.embedMaterialType == 'evercam' && !ui.isScorm -->
+                        <a class="right" close-popup="myFilesUpload">
+                            <i class="font font-close"></i>
+                        </a>
+                    </div>
+
+                    <div class="upload-wrapper ng-scope" ng-controller="FileUploadController" ng-init="
+                                useClientUploadFile=false;
+                                maxUploadSize=5368709120;
+                                userFreeSpace=-483287369;
+                                hasStorageCapacity= true;
+                                isFileExtensionCheckEnable=true;">
+                        <div class="file-uploader">
+                            <fieldset ng-class="{'disabled-upload-field': !hasStorageCapacity}" ng-disabled="!hasStorageCapacity">
+                                <input type="file" name="fileSelector" ng-show="!dropSupported" ngf-select="onFileSelect($files, 5368709120)" multiple="" ngf-accept="'.avi,.wmv,.mov,.mp4,.mpg,.rm,.rmvb,.mkv,.webm,.flv,.mp3,.wma,.wav,.m4a,.3gpp,.3gp,.jpg,.jpeg,.png,.webp,.gif,.bmp,.txt,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.csv,.pdf,.rtf,.odt,.odp,.ods,.swf,.zip,.rar,.tar,.heic'" accept=".jpg,.jpeg,.png,.webp,.gif,.bmp,.txt,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.xml,.csv,.pdf,.rtf,.odt,.odp,.ods" ng-disabled="isIE9CannotUploadFile()" class="ng-hide">
+
+                                    <div class="file-upload-area resource" ngf-drop="onFileSelect($files, 5368709120)" multiple="true" ngf-drag-over-class="'dragover'" ng-show="dropSupported">
+                                        <div class="select-file">
+                                                <button class="button-select-file" ngf-select="onFileSelect($files, 5368709120)" multiple="" accept=".jpg,.jpeg,.png,.webp,.gif,.bmp,.txt,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.xml,.csv,.pdf,.rtf,.odt,.odp,.ods">
+                                                    <i class="font font-file-select"></i>
+                                                    <span>添加文件</span>
+                                                </button>
+                                            <!-- ngIf: useClientUploadFile -->
+                                        </div>
+                                        <div class="size-limit">
+                                            <span>支持多个文件拖拽或点击上传，单个文件大小不能超过</span>
+                                            <span class="max-upload-size ng-binding" ng-bind="5368709120|humanizeBytes">10 MB</span>
+                                        </div>
+                                        <!-- ngIf: isFileExtensionCheckEnable --><div class="size-limit ng-scope" ng-if="isFileExtensionCheckEnable">
+                                            当前系统支持的文件格式
+                                            <i class="icon icon-tip" tipsy-class="gray" tipsy-html="yes" tipsy-follow-element-width="true" tipsy-literal="
+                                                            <p></p>
+                                                            <p>图片格式：jpg, jpeg, png, webp, gif, bmp, heic</p>
+                                                            <p>文档格式：txt, doc, docx, ppt, pptx, xls, xlsx, csv, pdf, rtf, odt, odp, ods</p>
+                                                            
+                                            </i>
+                                        </div><!-- end ngIf: isFileExtensionCheckEnable -->
+                                        <div class="size-limit">
+                                            上传档案为加密文件时，将无法进行预览
+                                        </div>
+                                    </div>
+
+                                <div class="html-msg ng-hide" ngf-drop-available="dropSupported" ng-show="!dropSupported">
+                                    您的浏览器不支持HTML5拖拽文件上传
+                                </div>
+                                <div class="html-msg ng-hide" ng-show="isIE9CannotUploadFile()">
+                                    您的浏览器版本过低，无法上传文件。请升级浏览器，或者使用其他浏览器上传文件
+                                </div>
+                            </fieldset>
+                        </div>
+
+                        <!-- ngIf: uploads.length > 0 || uploaded.length > 0 -->
+
+                        <div class="upload-hint in-my-files">
+            <div class="ipr-message" ng-init="twOrg = false;">
+            <div class="text-align-center">请尊重知识产权法，确保上传内容不侵犯他人知识产权。</div></div>
+                        </div>
+
+                        <div class="storage-info my-resources">
+                        </div>
+                    </div>
+                    <div class="form-buttons text-center popup-footer">
+            <div class="loading-spinner ng-hide" ng-show="loading">
+                <div class="spinner">
+                    <div class="mask">
+                        <div class="maskedCircle"></div>
+                    </div>
+                </div>
+            </div>            <button class="button button-green medium" close-popup="myFilesUpload" ng-disabled="!notUploading() || uploaded.length == 0" disabled="disabled">确认
+                        </button>
+                    </div>
+                </div>
+            </div> <form name="form" id="upload-edit" class="reveal-modal popup-area popup-480 ng-pristine ng-valid ng-scope ng-valid-server" data-reveal="" resetable="" server-validated="" onsubmit="return false">
+                <div class="popup-content">
+                    <div class="popup-header">
+                        <!-- ngIf: !uploadEdit.id --><span ng-if="!uploadEdit.id" class="ng-scope">新建文件夹</span><!-- end ngIf: !uploadEdit.id -->
+                        <!-- ngIf: uploadEdit.id -->
+                        <a class="right" close-popup="upload-edit">
+                            <i class="font font-close"></i>
+                        </a>
+                    </div>
+                    <div class="main-area">
+                        <span>名称：</span><input type="text" ng-model="uploadEdit.name" name="name" server-validated="" class="ng-pristine ng-untouched ng-valid ng-empty ng-valid-server">
+                        <div class="error"><span error-for="name" class="ng-binding ng-isolate-scope error" style="display: none;"></span></div>
+                    </div>
+                    <div class="popup-footer">
+                        <div class="form-buttons">
+            <div class="loading-spinner ng-hide" ng-show="loading">
+                <div class="spinner">
+                    <div class="mask">
+                        <div class="maskedCircle"></div>
+                    </div>
+                </div>
+            </div>                <button class="button button-green medium" ng-click="uploadEditConfirm()" type="button" ng-hide="loading" ng-disabled="!uploadEdit.name" disabled="disabled">确认</button>
+                            <button class="button button-grey medium" close-popup="upload-edit" type="button" ng-hide="loading">取消</button>
+                        </div>
+                    </div>
+                </div>
+            </form> <div id="link-editing-popup" class="reveal-modal popup-area popup-600 ng-scope" data-reveal="" resetable="" ng-controller="LinkEditCtrl" before-controller="i18nMessages = {
+                    'addLink': '新增链接',
+                    'editLink': '编辑链接',
+                    'name': '名称',
+                    'link': '链接',
+                    'type': '类型',
+                    'urlLink': '线上链接',
+                    'videoLink': '音视频链接',
+                    'confirm': '确认',
+                    'cancel': '取消'
+                };">
+                <div class="popup-content">
+                    <div class="popup-header">
+                        <span ng-bind="viewModel.title" class="ng-binding">新增链接</span>
+                        <a class="right" close-popup="link-editing-popup">
+                            <i class="font font-close"></i>
+                        </a>
+                    </div>
+                    <div class="main-area">
+                        <form name="link_editing_form" server-validated="" class="activity-form ng-pristine ng-valid ng-valid-server">
+                            <div class="section">
+                                <div class="item">
+                                    <div class="label">
+                                        <label class="required ng-binding" ng-bind="(i18nMessages.name) + ':'">名称:</label>
+                                    </div>
+                                    <div class="input right">
+                                        <input type="text" ng-model="form.name" name="name" server-validated="" class="ng-pristine ng-untouched ng-valid ng-empty ng-valid-server">
+                                    </div>
+                                    <div class="error">
+                                        <span error-for="name" class="ng-binding ng-isolate-scope error" style="display: none;"></span>
+                                    </div>
+                                </div>
+                                <div class="item">
+                                    <div class="label">
+                                        <label class="required ng-binding" ng-bind="(i18nMessages.link) + ':'">链接:</label>
+                                    </div>
+                                    <div class="input right">
+                                        <input type="text" ng-model="form.url" name="url" server-validated="" class="ng-pristine ng-untouched ng-valid ng-empty ng-valid-server">
+                                    </div>
+                                    <div class="error">
+                                        <span error-for="url" class="ng-binding ng-isolate-scope error" style="display: none;"></span>
+                                    </div>
+                                </div>
+
+                                <div class="item">
+                                    <div class="label">
+                                        <label class="required ng-binding" ng-bind="(i18nMessages.type) + ':'">类型:</label>
+                                    </div>
+                                    <div class="input">
+                                        <div class="choice">
+                                            <div class="type-choice">
+                                                <label for="url-link-type">
+                                                    <input type="radio" name="as-video-link" id="url-link-type" ng-disabled="viewModel.typeChoiceDisabled" ng-model="form.as_video_link" ng-value="false" class="ng-pristine ng-untouched ng-valid ng-not-empty" value="false" disabled="disabled">
+                                                    <span ng-bind="i18nMessages.urlLink" class="ng-binding">线上链接</span>
+                                                </label>
+                                                <label for="video-link-type">
+                                                    <input type="radio" name="as-video-link" id="video-link-type" ng-disabled="viewModel.typeChoiceDisabled" ng-model="form.as_video_link" ng-value="true" class="ng-pristine ng-untouched ng-valid ng-not-empty" value="true" disabled="disabled">
+                                                    <span ng-bind="i18nMessages.videoLink" class="ng-binding">音视频链接</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="error">
+                                        <span error-for="as_video_link" class="ng-binding ng-isolate-scope error" style="display: none;"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="popup-footer">
+                        <div class="form-buttons">
+            <div class="loading-spinner ng-hide" ng-show="loading">
+                <div class="spinner">
+                    <div class="mask">
+                        <div class="maskedCircle"></div>
+                    </div>
+                </div>
+            </div>                <button class="button button-green medium ng-binding" ng-click="confirmLinkEditing()" type="button" ng-hide="loading" ng-bind="i18nMessages.confirm">确认</button>
+                            <button class="button button-grey medium ng-binding" close-popup="link-editing-popup" type="button" ng-hide="loading" ng-bind="i18nMessages.cancel">取消</button>
+                        </div>
+                    </div>
+                </div>
+            </div> <div id="upload-move" class="reveal-modal popup-area popup-900 ng-scope" data-reveal="" resetable="" data-options="multiple_opened:true">
+                <!-- ngIf: popupState.popupOpened -->
+            </div><form id="batch-download-popup" class="reveal-modal popup-area popup-600 ng-pristine ng-valid ng-scope" data-reveal="" resetable="">
+                <div class="popup-content">
+                    <div class="popup-header">
+                        <span>打包下载</span>
+                        <a class="right" close-popup="batch-download-popup">
+                            <i class="font font-close"></i>
+                        </a>
+                    </div>
+                    <div class="main-area">
+                        <div class="message">
+                            <span>所选文件中包括转码中视频，此类文件无法下载，请问是否继续下载？</span>
+                        </div>
+                    </div>
+                    <div class="popup-footer">
+                        <div class="form-buttons">
+            <div class="loading-spinner ng-hide" ng-show="loading">
+                <div class="spinner">
+                    <div class="mask">
+                        <div class="maskedCircle"></div>
+                    </div>
+                </div>
+            </div>                <button class="button button-green medium" ng-click="zipDownload()" type="button" ng-hide="loading" close-popup="batch-download-popup">确认</button>
+                            <button class="button button-grey medium" close-popup="batch-download-popup" type="button" ng-hide="loading">取消</button>
+                        </div>
+                    </div>
+                </div>
+            </form>  <div id="confirmation-popup" class="reveal-modal popup-area confirmation-popup popup-480 ng-scope" data-reveal="" resetable="" data-options="multiple_opened:true">
+                <!-- ngIf: popupState.popupOpened -->
+            </div>   <div id="shared-resource-info-edit" class="popup-area reveal-modal popup-600 ng-scope" data-reveal="" before-controller="
+                noClassificationLabel = '无指定分类'; noDepartmentLabel = '无指定单位';
+                schoolResourceLibLabel = '校本资源库'; departmentResourceLibLabel = '单位资源库';
+                personLabel = '个人'; groupResourceLibLabel = '小组资源库';
+                otherOrgsLabel = '其他机构（跨机构）'; offCampusLabel = '校外';
+                hasManagementPermission = false;
+                currentUserDepartmentId = 1825;
+                isStudent = 'Student' == 'Student';
+                isShareResourceToOffCampusToggleOpen = false;
+                isShareResourceToOtherOrgsToggleOpen = false;
+                isShareResourceWithPersonToggleOpen = true;
+                isShareResourceWithDepartmentToggleOpen = true;
+                isShareResourceWithGroupToggleOpen = false;
+                isShareResourceAllowDownloadToggleOpen = true;
+                isShareResourceCategoryToggleOpen = false;
+                isOrgTeamTeachingToggleOpen = false;
+                resourceCategoryMap={
+                        'video': '视频',
+                        'lesson_resource': '录播教材',
+                        'audio': '音频',
+                        'image': '图片',
+                        'document': '文档',
+                        'swf': 'Flash',
+                        'scorm': 'SCORM',
+                        'file': '其它',
+                        'link': '链接',
+                        'subject_library': '题库',
+                        'course_package': '课程包',
+                        'folder': '文件夹'};" ng-controller="SharedResourceInfoEditCtrl" resetable="" ng-init="select2TextForTags = {
+                        'formatNoMatches': '没有匹配结果',
+                        'formatSearching': '搜索中……',
+                        'formatInputTooShort': '请至少输入两个字符'};
+                        i18nMessages = {'first': '资源分类',
+                                        'second': '资源分类二',
+                                        'third': '资源分类三'};">
+                <!-- ngIf: popupState.popupOpened -->
+            </div>
+            <div class="hide">
+                <span id="selected-text">已选择 # 个&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span id="selected-text-all">全部&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <span id="filter-placeholder">请输入关键字</span>
+            </div> 
+        </div>
+    </div>
+</body>
+<!--图案库-->
+<script src="https://unpkg.com/ionicons@5.1.2/dist/ionicons.js"></script>
+<script src="./js/jquery-3.2.1.slim.min.js"></script>
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+<script src="./js/index.js"></script>
+
+</html>

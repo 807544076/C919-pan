@@ -1,8 +1,9 @@
-from OpenSSL import crypto,SSL
+from OpenSSL import crypto, SSL
 from socket import gethostname
 
-certFile='./cert/selfsigned.crt'
-keyFile='./cert/selfsigned.key'
+certFile = './cert/selfsigned.crt'
+keyFile = './cert/selfsigned.key'
+
 
 def genSelfsignedCert():
     # create a key pair
@@ -21,7 +22,7 @@ def genSelfsignedCert():
     cert.gmtime_adj_notAfter(10*365*24*60*60)
     cert.set_issuer(cert.get_subject())
     cert.set_pubkey(k)
-    cert.sign(k,'sha512')
+    cert.sign(k, 'sha512')
     # output cert
     with open(certFile, "wt") as f:
         f.write(crypto.dump_certificate(crypto.FILETYPE_PEM, cert).decode("utf-8"))
@@ -30,5 +31,6 @@ def genSelfsignedCert():
         f.write(crypto.dump_privatekey(crypto.FILETYPE_PEM, k).decode("utf-8"))
     print('selfsigned success')
 
-if __name__=='__main__':
+
+if __name__ == '__main__':
     genSelfsignedCert()

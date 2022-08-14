@@ -39,22 +39,30 @@ $login.click(function() {
     })
     // 注册前端慢哈希
 function SetRegister() {
-    hash_password = document.getElementById('r_password').value;
-    for (var i = 0; i < 10; i++) {
-        hash_password = GetHashPwd(document.getElementById('r_email').value, hash_password);
-    }
-    document.getElementById('r_password').value = hash_password
-    $('.register-box').submit();
+
+    $('#loding').show();
+    setTimeout(function() {
+        hash_password = document.getElementById('r_password').value;
+        for (var i = 0; i < 10; i++) {
+            hash_password = GetHashPwd(document.getElementById('r_email').value, hash_password);
+        }
+        document.getElementById('r_password').value = hash_password
+        $('.register-box').submit();
+    }, 50);
     return true;
 }
 // 登录前端慢哈希
 function SetLogin() {
-    hash_password = document.getElementById('l_password').value;
-    for (var i = 0; i < 10; i++) {
-        hash_password = GetHashPwd(document.getElementById('l_email').value, hash_password);
-    }
-    document.getElementById('l_password').value = hash_password
-    $('.login-box').submit();
+
+    $('#loding').show();
+    setTimeout(function() {
+        hash_password = document.getElementById('l_password').value;
+        for (var i = 0; i < 10; i++) {
+            hash_password = GetHashPwd(document.getElementById('l_email').value, hash_password);
+        }
+        document.getElementById('l_password').value = hash_password
+        $('.login-box').submit();
+    }, 50);
     return true;
 }
 
@@ -87,7 +95,7 @@ $('#r_password').focusout(function() {
     var re = zxcvbn(a)
     var length_pass = false;
     var strong_pass = false;
-    if (a.length > 6 && a.length < 36) {
+    if (a.length >= 6 && a.length <= 36) {
         length_pass = true;
     } else {
         alert('密码长度应在 6 到 36 位之间');
