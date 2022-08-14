@@ -6,6 +6,7 @@ import nacl.hash
 import time
 import random
 from send_mail import sendMail
+from datetime import timedelta
 
 certFile='./cert/selfsignedCertificate.pem'
 keyFile='./cert/privateKey.pem'
@@ -17,7 +18,8 @@ digest = HASHER(hash_msg, encoder=nacl.encoding.HexEncoder)
 pages=Flask(__name__)
 pages.secret_key = digest
 
-pages.config['SESSION_PERMANENT'] = False
+pages.config['SESSION_PERMANENT'] = True
+pages.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=12)
 pages.config['SESSION_TYPE'] = 'filesystem'
 Session(pages)
 
@@ -35,7 +37,7 @@ def index():
     if session.get('name'):
         return render_template('index.html', userName=session.get('name'))
     else:
-        return render_template('index.html')
+        return redirect(url_for('testpage_login'))
 
 
 @pages.route('/login')
@@ -50,6 +52,8 @@ def forgot():
 
 @pages.route('/testpage_register',methods=['GET', 'POST'])
 def testpage_register():
+    if session.get('name'):
+        redirect(url_for('index'))
     if request.method == 'POST':
         bytes_email = bytes(request.form['email'], 'utf-8')
         bytes_password = bytes(request.form['password'], 'utf-8')
@@ -88,6 +92,8 @@ def testpage_register():
 
 @pages.route('/testpage_login', methods=['GET', 'POST'])
 def testpage_login():
+    if session.get('name'):
+        redirect(url_for('index'))
     if request.method == 'POST':
         bytes_email = bytes(request.form['email'], 'utf-8')
         bytes_password = bytes(request.form['password'], 'utf-8')
@@ -126,8 +132,7 @@ def email_check():
             print(request.form['check'])
             return redirect(url_for('email_check'))
     else:
-        return render_template('email_check.html')
-
+        return render_template('403.html')
 
 @pages.route('/logout',methods=['POST'])
 def logout():
@@ -138,6 +143,14 @@ def logout():
 def page_not_found(error):
     return render_template('404.html')
 
+
+@pages.errorhandler(403)
+def accessDenied(error):
+    return render_template('403.html')
+
+@pages.errorhandler(400)
+def badRequest(error):
+    return render_template('400.html')
 
 if __name__ == '__main__':
     pages.run(debug=True,ssl_context=(certFile,keyFile),port=443)
