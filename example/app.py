@@ -134,7 +134,7 @@ def email_check():
     else:
         return render_template('403.html')
 
-@pages.route('/logout',methods=['POST'])
+@pages.route('/logout', methods=['POST'])
 def logout():
     session.clear()
     return redirect(url_for('testpage_login'))
