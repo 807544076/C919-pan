@@ -145,7 +145,7 @@ def page_not_found(error):
     return render_template('404.html')
 
 
-@pages.errorhandler(403):
+@pages.errorhandler(403)
 def accessDenied(error):
     return render_template('403.html')
 
