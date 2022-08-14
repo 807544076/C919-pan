@@ -129,7 +129,7 @@ def email_check():
         return render_template('email_check.html')
 
 
-@pages.route('/logout',methods=['POST'])
+@pages.route('/logout', methods=['POST'])
 def logout():
     session.clear()
     return redirect(url_for('testpage_login'))
