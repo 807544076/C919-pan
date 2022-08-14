@@ -10,7 +10,7 @@
 </head>
 
 <body>
-    <div class="container">
+    <div class="container" id="content">
         <div class="form-box">
             <!-- 注册 -->
             <div class="register-box hidden">
@@ -71,6 +71,29 @@
         <p hidden id="flash_mes">{{ message }} </p>
         {% endif %} {% endfor %}
     </div>
+    <layer id="loding" hidden>
+        <div>
+            <div class="loader">
+                <div class="loader-inner">
+                    <div class="loader-line-wrap">
+                        <div class="loader-line"></div>
+                    </div>
+                    <div class="loader-line-wrap">
+                        <div class="loader-line"></div>
+                    </div>
+                    <div class="loader-line-wrap">
+                        <div class="loader-line"></div>
+                    </div>
+                    <div class="loader-line-wrap">
+                        <div class="loader-line"></div>
+                    </div>
+                    <div class="loader-line-wrap">
+                        <div class="loader-line"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </layer>
 
 </body>
 
