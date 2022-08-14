@@ -20,13 +20,6 @@ r_info = ['', '', '', '']   # [0]用户名，[1]hash邮箱，[2]hash密码，[3]
 check_num = []
 start_time = [0]
 
-pages.secret_key = digest
-
-r_info = ['', '', '', '']   # [0]用户名，[1]hash邮箱，[2]hash密码，[3]原邮箱
-check_num = []
-start_time = [0]
-
-
 @pages.route('/')
 def to_index():
     return redirect(url_for('index'))
