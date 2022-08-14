@@ -14,22 +14,27 @@ body {
 
 .container {
     background-color: #ffffff;
-    width: 650px;
-    height: 415px;
+    width: 450px;
+    height: 350px;
     border-radius: 5px;
     box-shadow: 5px 5px 5px rgba(0, 0, 0, 0, 1);
     position: relative;
+    padding-top: 5px;
+    padding-right: 3px;
+    padding-bottom: 5px;
+    padding-left: 8px;
 }
 
 .form-box,
 .register-box,
 .login-box,
-.forget-box,
+.forgot-box,
 .threelogin-box {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
+    font-size: 12px;
 }
 
 .login-box p {
@@ -109,8 +114,8 @@ input:focus::placeholder {
 
 .form-box button {
     width: 70%;
-    margin-top: 50px;
-    margin-bottom: 12px;
+    margin-top: 10px;
+    bottom: 50px;
     background-color: #6262ad;
     outline: none;
     border-radius: 8px;
