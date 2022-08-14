@@ -34,6 +34,15 @@ button {
     letter-spacing: 2px;
     border: none;
     cursor: pointer;
+    -moz-appearance: none;
+    display: inline-block;
+    font-family: Helvetica,Hiragino Sans GB,WenQuanYi Micro Hei,Microsoft YaHei,sans-serif,Noto Sans CJK SC,Code2001,Code2002;
+    font-weight: 400;
+    margin: 0;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color .3s ease-out;
 }
 button:hover {
     background-color: #6262ad;
@@ -68,8 +77,9 @@ ul{
   padding: 0;
   list-style: none;
 }
-a{
-  text-decoration: none;
+a {
+    line-height: inherit;
+    text-decoration: none;
 }
 
 .l-navbar{
@@ -220,4 +230,154 @@ a{
     padding: 16px;
     position: relative;
 }
-  
+
+.resources-area .resource-list-wrapper .resource-list-crumbs, .rubrics-area .resource-list-wrapper .resource-list-crumbs {
+    border-bottom: 1px solid #dfdfdf;
+    line-height: 35px;
+    padding: 0 20px;
+}
+.resources-area .resource-list-wrapper .resource-list-crumbs, .rubrics-area .resource-list-wrapper .resource-list-crumbs {
+    border-bottom: 1px solid #dfdfdf;
+    line-height: 35px;
+    padding: 0 20px;
+}
+div, span {
+    word-break: normal;
+}
+blockquote, dd, div, dl, dt, form, h1, h2, h3, h4, h5, h6, li, ol, p, pre, td, th, ul {
+    margin: 0;
+    padding: 0;
+}
+*, ::after, ::before {
+    -webkit-box-sizing: inherit;
+    -moz-box-sizing: inherit;
+    box-sizing: inherit;
+}
+
+a, a:hover {
+    color: var(--link-color);
+}
+a, a:focus, a:hover {
+    color: var(--primary-brand-color);
+  }
+
+
+.resources-area .menu-area, .rubrics-area .menu-area {
+    padding: 9px 20px;
+}
+.resources-area .menu-area, .rubrics-area .menu-area {
+    padding: 9px 20px;
+}
+div, span {
+    word-break: normal;
+}
+blockquote, dd, div, dl, dt, form, h1, h2, h3, h4, h5, h6, li, ol, p, pre, td, th, ul {
+    margin: 0;
+    padding: 0;
+}
+*, ::after, ::before {
+    -webkit-box-sizing: inherit;
+    -moz-box-sizing: inherit;
+    box-sizing: inherit;
+}
+
+.resources-area .menu-area ul.button-group, .rubrics-area .menu-area ul.button-group {
+    float: none;
+}
+.resources-area .menu-area ul.button-group, .rubrics-area .menu-area ul.button-group {
+    float: none;
+}
+ul.button-group {
+    height: 27px;
+}
+.button-group {
+    float: right;
+}
+.button-group {
+    left: 0;
+    list-style: none;
+    margin: 0;
+}
+ul {
+    margin-left: 1.1rem;
+}
+dl, ol, ul {
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.6;
+    list-style-position: outside;
+    margin-bottom: 1.42857rem;
+}
+blockquote, dd, div, dl, dt, form, h1, h2, h3, h4, h5, h6, li, ol, p, pre, td, th, ul {
+    margin: 0;
+    padding: 0;
+}
+li, ul {
+    list-style: none;
+}
+.button-group::after {
+    clear: both;
+}
+.button-group::after, .button-group::before {
+    content: " ";
+    display: table;
+}
+
+.resources-area .menu-area ul.button-group li.operations, .rubrics-area .menu-area ul.button-group li.operations {
+    width: 375px !important;
+}
+.resources-area .menu-area ul.button-group li.operations, .rubrics-area .menu-area ul.button-group li.operations {
+    width: 375px !important;
+}
+.resources-area .menu-area ul.button-group li, .rubrics-area .menu-area ul.button-group li {
+    width: auto;
+}
+.resources-area .menu-area ul.button-group li, .rubrics-area .menu-area ul.button-group li {
+    width: auto;
+}
+ul.button-group > li {
+    margin-left: 0;
+    margin-right: 6px;
+}
+.button-group > li {
+    display: inline-block;
+    margin: 0 -2px;
+      margin-right: -2px;
+      margin-left: -2px;
+}
+blockquote, dd, div, dl, dt, form, h1, h2, h3, h4, h5, h6, li, ol, p, pre, td, th, ul {
+    margin: 0;
+    padding: 0;
+}
+li, ul {
+    list-style: none;
+}
+.resources-area .menu-area ul.button-group .batch-operation-button-wrapper, .rubrics-area .menu-area ul.button-group .batch-operation-button-wrapper {
+    display: inline-block;
+    margin-right: 5px;
+    position: relative;
+}
+.resources-area .menu-area ul.button-group .batch-operation-button-wrapper, .rubrics-area .menu-area ul.button-group .batch-operation-button-wrapper {
+    display: inline-block;
+    margin-right: 5px;
+    position: relative;
+}
+div, span {
+    word-break: normal;
+}
+blockquote, dd, div, dl, dt, form, h1, h2, h3, h4, h5, h6, li, ol, p, pre, td, th, ul {
+    margin: 0;
+      margin-right: 0px;
+    padding: 0;
+}
+
+.resources-area .menu-area ul.button-group .batch-operation-button-wrapper .batch-button, .rubrics-area .menu-area ul.button-group .batch-operation-button-wrapper .batch-button {
+    padding: 5px 11px 5px 15px;
+}
+.resources-area .menu-area ul.button-group .button, .resources-area .menu-area ul.button-group button, .rubrics-area .menu-area ul.button-group .button, .rubrics-area .menu-area ul.button-group button {
+    border-radius: 3px;
+}
+ul.button-group > li:first-child .button, ul.button-group > li:first-child button {
+    border: 1px solid #c9c9c9;
+}
+
