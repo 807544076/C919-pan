@@ -132,7 +132,7 @@ def email_check():
             print(request.form['check'])
             return redirect(url_for('email_check'))
     else:
-        return render_template('email_check.html')
+        return render_template('403.html')
 
 
 @pages.route('/logout',methods=['POST'])
