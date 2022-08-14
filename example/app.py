@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
+from flask import Flask, render_template, request, redirect, url_for, flash,session
+from flask_session import Session
 from linksql import C919SQL
 import nacl.encoding
 import nacl.hash
@@ -16,6 +17,10 @@ digest = HASHER(hash_msg, encoder=nacl.encoding.HexEncoder)
 pages=Flask(__name__)
 pages.secret_key = digest
 
+pages.config['SESSION_PERMANENT'] = False
+pages.config['SESSION_TYPE'] = 'filesystem'
+Session(pages)
+
 r_info = ['', '', '', '']   # [0]用户名，[1]hash邮箱，[2]hash密码，[3]原邮箱
 check_num = []
 start_time = [0]
@@ -28,9 +33,8 @@ def to_index():
 
 @pages.route('/index')
 def index():
-    if request.args.get('userName'):
-        username = request.args.get('userName')
-        return render_template('index.html', userName=username)
+    if session.get('name'):
+        return render_template('index.html', userName=session.get('name'))
     else:
         return render_template('index.html')
 
@@ -92,7 +96,8 @@ def testpage_login():
         selectSQL.search_link()
         if selectSQL.select_email(HASHER(bytes_email, encoder=nacl.encoding.HexEncoder).decode('utf-8')):
             if selectSQL.select_password(HASHER(bytes_password, encoder=nacl.encoding.HexEncoder).decode('utf-8')):
-                return redirect(url_for('index', userName=selectSQL.select_username(HASHER(bytes_email, encoder=nacl.encoding.HexEncoder).decode('utf-8'))[0]))
+                session['name']=selectSQL.select_username(HASHER(bytes_email, encoder=nacl.encoding.HexEncoder).decode('utf-8'))[0]
+                return redirect(url_for('index', userName=session.get('name')))
             else:
                 flash('密码错误！')
                 return redirect(url_for('login'))
@@ -115,7 +120,8 @@ def email_check():
             sql.admin_link()
             sql.userCreate(r_info[0], r_info[1], r_info[2])
             sql.end_link()
-            return redirect(url_for('index', userName=r_info[0]))
+            session['name'] = r_info[0]
+            return redirect(url_for('index', userName=session.get('name')))
         else:
             flash('验证码错误！请重新输入')
             print(request.form['check'])
@@ -123,6 +129,11 @@ def email_check():
     else:
         return render_template('email_check.html')
 
+
+@pages.route('/logout',methods=['POST'])
+def logout():
+    session.clear()
+    return redirect(url_for('testpage_login'))
 
 @pages.errorhandler(404)
 def page_not_found(error):

@@ -11,6 +11,7 @@ wtforms = "*"
 PyMySQL = "*"
 pynacl = "*"
 pyopenssl = "*"
+flask_session = "*"
 
 [dev-packages]
 
