@@ -1,52 +1,123 @@
+
 <!DOCTYPE html>
 <html>
-
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>忘记密码</title>
-    <link rel="stylesheet" href="./css/login.css">
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+        .main{
+            width: 330px;
+            margin: 0 auto;
+            background-color: #BCB7D9;
+            border-radius: 10px;
+        }
+        .demo-ruleForm{
+            width: 100%;
+            padding: 20px 10px;
+        }
+        ._input{
+            height: 30px;
+            width: 250px;
+        }
+        .parent{
+            position: relative;
+        }
+        .children0{
+            position: absolute;
+            height: 30px;
+            background-color:#BCB7D9;
+            right: 25px;
+            top:6px;
+            line-height: 30px;
+            font-size:8px;
+            border: 1px solid;
+            opacity: .5;
+            border-radius: 3px;
+        }
+
+    </style>
 </head>
-
 <body>
-    <div class="container">
-        <div class="form-box">
-            <!-- 注册 -->
-            <div class="register-box hidden">
-                <h1>register</h1>
-                <input type="text" placeholder="用户名">
-                <input type="email" placeholder="邮箱">
-                <input type="password" placeholder="请输入密码">
-                <input type="password" placeholder="确认密码">
-                <button>注册</button>
-            </div>
-            <!-- 登录 -->
-            <div class="login-box ">
-                <h1>login</h1>
-                <input type="text" placeholder="用户名">
-                <input type="password" placeholder="密码">
-                <button>登录</button>            
-            </div>
-           
-        </div>
-
-        <div class="con-box left">
-            <h2>加入<span>C919作战区</span></h2>
-            <p><span>注册</span>一个账号吧</p>
-            <img src="./img/11.jpg" alt="">
-            <p>已有帐号</p>
-            <button id="login">去登录</button>
-        </div>
-        <div class="con-box right">
-            <h2>进入<span>C919作战区</span></h2>
-            <p>点击<span>登录</span>进入</p>
-            <img src="./img/22.jpg" alt="">
-            <p>没有帐号？</p>
-            <button id="register">去注册</button>
-        </div>
+<div id="app">
+    <div class="main">
+        <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm" label-width="60px" class="demo-ruleForm">
+            <el-form-item label="邮箱" prop="pass">
+                <el-input type="password" v-model="ruleForm.pass" autocomplete="off" class="_input"></el-input>
+            </el-form-item>
+            <el-form-item label="验证码" prop="age">
+                <el-input v-model.number="ruleForm.age" class="_input parent">
+                </el-input>
+                <div class="children0">获取验证码</div>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="submitForm('ruleForm')" style="width: 200px">下一步</el-button>
+            </el-form-item>
+        </el-form>
     </div>
-
+    <el-dialog title="找回新密码" :visible.sync="dialogFormVisible">
+        <div class="main">
+            <el-form :model="Form" status-icon :rules="rules" ref="Form" label-width="60px" class="demo-ruleForm">
+                <el-form-item label="新密码" prop="pass">
+                    <el-input type="password" v-model="ruleForm.pass" autocomplete="off" class="_input"></el-input>
+                </el-form-item>
+                <el-form-item label="请再输一次" prop="age">
+                    <el-input v-model.number="ruleForm.age" class="_input parent">
+                    </el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" @click="submitForm('ruleForm')" style="width: 200px">提交</el-button>
+                </el-form-item>
+            </el-form>
+        </div>
+</el-dialog>
+</div>
 </body>
+<!-- import Vue before Element -->
+<script src="./vue.js"></script>
+<!-- import JavaScript -->
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script>
+    new Vue({
+        el: '#app',
+        data(){
+            return {
+                ruleForm: {
+                    pass: '',
+                    checkPass: '',
+                    age: ''
+                },
+                dialogFormVisible: false,
+                Form: {
+                    name: '',
+                    region: '',
+                    date1: '',
+                    date2: '',
+                    delivery: false,
+                    type: [],
+                    resource: '',
+                    desc: ''
+                },
+                formLabelWidth: '300px'
+                }
+            },
+        methods: {
+            submitForm(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        this.dialogFormVisible = true
+                    } else {
+                        console.log('error submit!!');
+                        return false;
+                    }
+                });
 
+            },
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
+
+            }
+        }
+
+    })
+</script>
 </html>
