@@ -132,7 +132,7 @@ def email_check():
             print(request.form['check'])
             return redirect(url_for('email_check'))
     else:
-        return 403
+        return render_template('403.html')
 
 @pages.route('/logout',methods=['POST'])
 def logout():
@@ -148,7 +148,7 @@ def page_not_found(error):
 def accessDenied(error):
     return render_template('403.html')
 
-@pages.errorhander(400)
+@pages.errorhandler(400)
 def badRequest(error):
     return render_template('400.html')
 
