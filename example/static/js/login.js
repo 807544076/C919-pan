@@ -39,28 +39,30 @@ $login.click(function() {
     })
     // 注册前端慢哈希
 function SetRegister() {
-
+    var csrf_token = $('#csrf_text').text();
+    document.getElementById('r_csrf').value = csrf_token;
     $('#loding').show();
     setTimeout(function() {
-        hash_password = document.getElementById('r_password').value;
+        var hash_password = document.getElementById('r_password').value;
         for (var i = 0; i < 10; i++) {
             hash_password = GetHashPwd(document.getElementById('r_email').value, hash_password);
         }
-        document.getElementById('r_password').value = hash_password
+        document.getElementById('r_password').value = hash_password;
         $('.register-box').submit();
     }, 50);
     return true;
 }
 // 登录前端慢哈希
 function SetLogin() {
-
+    var csrf_token = $('#csrf_text').text();
+    document.getElementById('l_csrf').value = csrf_token;
     $('#loding').show();
     setTimeout(function() {
-        hash_password = document.getElementById('l_password').value;
+        var hash_password = document.getElementById('l_password').value;
         for (var i = 0; i < 10; i++) {
             hash_password = GetHashPwd(document.getElementById('l_email').value, hash_password);
         }
-        document.getElementById('l_password').value = hash_password
+        document.getElementById('l_password').value = hash_password;
         $('.login-box').submit();
     }, 50);
     return true;
