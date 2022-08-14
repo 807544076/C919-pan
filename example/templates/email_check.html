@@ -2,7 +2,8 @@
     <div class="email-box">
         <div class="email-form">
             <form method="post" action="{{url_for('email_check')}}" class="email-box" name="emailForm">
-                <input type="text" placeholder="请输入验证码" value="{{request.form['check']}}" name="check" id="check">
+                <p>劳烦验证您的注册邮箱~</p>
+                <input type="text" placeholder="请输入注册邮箱收到的验证码" value="{{request.form['check']}}" name="check" id="check">
                 <button type="submit">验证</button>
             </form>
         </div>
