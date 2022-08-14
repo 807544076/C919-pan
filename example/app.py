@@ -7,8 +7,8 @@ import time
 import random
 from send_mail import sendMail
 
-certFile='./cert/selfsigned.crt'
-keyFile='./cert/selfsigned.key'
+certFile='./cert/selfsignedCertificate.pem'
+keyFile='./cert/privateKey.pem'
 
 HASHER = nacl.hash.sha512
 hash_msg = bytes(str(time.time()), 'utf-8')
