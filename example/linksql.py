@@ -1,5 +1,6 @@
 import pymysql
 
+
 class C919SQL:
     def __init__(self):
         self.__cursor = None
@@ -101,3 +102,62 @@ class C919SQL:
             self.__cursor.execute(sql)
             result = self.__cursor.fetchone()
             return result
+
+    def upload_file(self, filename, owner_uid, filehash):
+        if not self.islink:
+            print('error! not linked yet')
+        else:
+            sql = "insert into file_info(filename, owner_uid, filehash) values(%s %s %s)" % (filename, owner_uid, filehash)
+            self.__cursor.execute(sql)
+            self.__db.commit()
+            print('create successfully')
+
+    def delete_file(self, file_id):
+        if not self.islink:
+            print('error! not linked yet')
+        else:
+            sql = "delete from file_info where id = '" + file_id + "';"
+            self.__cursor.execute(sql)
+            print('delete successfully')
+
+    def select_file_id(self, filename, owner_uid):
+        if not self.islink:
+            print('error! not linked yet')
+        else:
+            sql = "select id from file_info where filename = '" + filename + "' and owner_uid = " + owner_uid + ";"
+            self.__cursor.execute(sql)
+            result = self.__cursor.fetchone()
+            return result
+
+    def set_shared(self, file_id, status):
+        if not self.islink:
+            print('error! not linked yet')
+        else:
+            if status:
+                sql = "update file_info set isshared = true where id = " + file_id + ";"
+            else:
+                sql = "update file_info set isshared = false where id = " + file_id + ";"
+            self.__cursor.execute(sql)
+            print('change successfully')
+
+    def set_check(self, uid, status):
+        if not self.islink:
+            print('error! not linked yet')
+        else:
+            if status:
+                sql = "update user_info set ischeck = true where uid = " + uid + ";"
+            else:
+                sql = "update user_info set ischeck = false where uid = " + uid + ";"
+            self.__cursor.execute(sql)
+            print('change successfully')
+
+    def set_frozen(self, uid, status):
+        if not self.islink:
+            print('error! not linked yet')
+        else:
+            if status:
+                sql = "update user_info set isfrozen = true where uid = " + uid + ";"
+            else:
+                sql = "update user_info set isfrozen = false where uid = " + uid + ";"
+            self.__cursor.execute(sql)
+            print('change successfully')
