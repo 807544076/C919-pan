@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 
-{% block title %}Page Not Found{% endblock %}
+{% block title %}Bad Request{% endblock %}
 
 {% block body %}
-<h1>404错误:</h1>
-<p>您访问的页面不存在耶</p>
+<h1>400错误:</h1>
+<p>非法请求！</p>
 <a href="{{url_for('index')}}">点我返回主页面</a>
 {% endblock %}
