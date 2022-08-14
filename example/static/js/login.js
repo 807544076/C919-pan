@@ -60,15 +60,16 @@ function SetLogin() {
 
 
 // 密码重复检测
-$('#r_password_again').on('change', function() { //输入框内容改变时发生的事件通用版
+$('#r_password_again').focusout(function() { //输入框内容改变时发生的事件通用版
     var a = $('#r_password').val();
     var b = $('#r_password_again').val();
     if (a != b) {
         alert('输入的密码不相同！请重新输入');
         document.getElementById('r_password_again').value = '';
+        $('#r_submit').hide();
     }
     if (a != '' && b != '') {
-        $('#r_submit').removeAttr('hidden');
+        $('#r_submit').show();
     }
 });
 
@@ -80,7 +81,7 @@ $(document).ready(function() {
 });
 
 // 密码检测
-$('#r_password').on('change', function() {
+$('#r_password').focusout(function() {
     $('#password_strong').removeAttr('hidden');
     var a = $('#r_password').val();
     var re = zxcvbn(a)
@@ -112,30 +113,42 @@ $('#r_password').on('change', function() {
         strong_pass = true;
     }
     if (length_pass && strong_pass) {
-        $('#r_password_again').removeAttr('hidden');
+        $('#password_strong').show();
+        $('#r_password_again').show();
+    } else {
+        $('#r_password_again').hide();
+        $('#r_submit').hide();
     }
 });
 
 // 用户名检测
-$('#r_username').on('change', function() {
+$('#r_username').focusout(function() {
     var username = $('#r_username').val();
     var RegExp = /[`~!@#$^&*()=|{}':;',\[\].<>《》\\\/?~！@#￥……&*（）――|{}【】‘；：”“'。，、？ ]+/g;
     if (RegExp.test(username)) {
         alert('用户名含有特殊字符！');
-        $('#r_email').attr('hidden');
+        $('#r_email').hide();
+        $('#r_password').hide();
+        $('#password_strong').hide();
+        $('#r_password_again').hide();
+        $('#r_submit').hide();
+
     } else {
-        $('#r_email').removeAttr('hidden');
+        $('#r_email').show();
     }
 });
 
 // 邮箱检测
-$('#r_email').on('change', function() {
+$('#r_email').focusout(function() {
     var email = $('#r_email').val();
     var RegExp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
     if (RegExp.test(email)) {
-        $('#r_password').removeAttr('hidden');
+        $('#r_password').show();
     } else {
         alert('邮箱格式不正确！');
-        $('#r_password').attr('hidden');
+        $('#r_password').hide();
+        $('#password_strong').hide();
+        $('#r_password_again').hide();
+        $('#r_submit').hide();
     }
 });

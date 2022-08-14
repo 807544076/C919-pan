@@ -9,8 +9,8 @@
 
 <body>
     <div>
-        <div style="width: 100%; height: 44px; background-color: #bcb7d8; position: fixed; z-index: 1; text-align: center; color: white; font-size: 14px; line-height: 44px; font-weight: bold;">
-            {% if userName %} {% block header %}{{userName}}{% endblock %} ,欢迎使用中传放心传 C919 Edition {% else %} 欢迎使用中传放心传 C919 Edition {% endif %}
+        <div id="headline">
+            您好, {% if userName %} {% block header %}{{userName}}{% endblock %} ,欢迎使用中传放心传 C919 Edition {% else %} 欢迎使用中传放心传 C919 Edition {% endif %}
         </div>
         <div style="padding-top: 36px;">
             {% block body %} {% endblock %}
@@ -18,3 +18,5 @@
     </div>
 
 </html>
+
+<link rel="stylesheet" href="/static/css/base.css">
