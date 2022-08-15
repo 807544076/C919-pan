@@ -161,3 +161,39 @@ class C919SQL:
                 sql = "update user_info set isfrozen = false where uid = " + uid + ";"
             self.__cursor.execute(sql)
             print('change successfully')
+
+    def selectUserUUID(self, email):
+        if not self.islink:
+            print('error! not linked yet')
+        else:
+            sql = "select uuid from user_info where email = " + email + ";"
+            self.__cursor.execute(sql)
+            result = self.__cursor.fetchone()
+            return result
+    
+    def selectFileHash(self,filename):
+        if not self.islink:
+            print('error! not linked yet')
+        else:
+            sql = "select filehash from file_info where filename = " + filename + ";"
+            self.__cursor.execute(sql)
+            result = self.__cursor.fetchone()
+            return result
+
+    def selectAllFileHash(self):
+        if not self.islink:
+            print('error! not linked yet')
+        else:
+            sql = "select filehash from file_info;"
+            self.__cursor.execute(sql)
+            result = self.__cursor.fetchall()
+            return result
+    
+    def selectUserPasswordHash(self,email):
+        if not self.islink:
+            print('error! not linked yet')
+        else:
+            sql = "select password from user_info where email = " + email + ";"
+            self.__cursor.execute(sql)
+            result = self.__cursor.fetchone()
+            return result
