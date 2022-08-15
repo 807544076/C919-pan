@@ -4,6 +4,7 @@ from linksql import C919SQL
 import nacl
 
 fileStorage='./fileStorage/'
+fileTypeWhiteList=['jpg','png','gif','jpeg','bmp','doc','docx','xls','xlsx','ppt','pptx']
 
 def dirCheck(email):
     if not path.exists(fileStorage):
@@ -16,7 +17,7 @@ def dirCheck(email):
         mkdir(fileStorage+userUUID)
     return fileStorage+userUUID
 
-def fileExist(fileNameToBeChecked,newFileHash):
+def fileExist(newFileHash):
     db=C919SQL()
     db.search_link()
     allHashRecord=db.selectAllFileHash()
@@ -34,9 +35,11 @@ def fileExist(fileNameToBeChecked,newFileHash):
 
 def upload(email,file):
     userDir=dirCheck(email)
-    fileName=file.filename
+    fileName=path.splitext(file)[0]
+    fileExtension=path.splitext(file)[1][1:]
+    assert fileExtension in fileTypeWhiteList,'不允许的文件类型'
     assert len(fileName)<=45,'文件名过长,超过45个字符'
-    fileContent=file.read()
+    fileContent=open(file,'rb').read()
     fileSize=len(fileContent)
     assert fileSize<=1024*1024*10,'文件过大,超过10MB限制'
     fileHash=md5(fileContent).hexdigest()
