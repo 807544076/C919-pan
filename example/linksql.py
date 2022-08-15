@@ -161,3 +161,12 @@ class C919SQL:
                 sql = "update user_info set isfrozen = false where uid = " + uid + ";"
             self.__cursor.execute(sql)
             print('change successfully')
+
+    def selectUserUUID(self, email):
+        if not self.islink:
+            print('error! not linked yet')
+        else:
+            sql = "select uuid from user_info where email = " + email + ";"
+            self.__cursor.execute(sql)
+            result = self.__cursor.fetchone()
+            return result
