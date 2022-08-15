@@ -126,7 +126,6 @@ input:focus::placeholder {
     cursor: pointer;
 }
 
-
 .form-box button:hover {
     background-color: #6262ad;
     color: #000000;
@@ -199,3 +198,6 @@ input:focus::placeholder {
     color: #000000;
 }
 
+#email {
+    border-bottom: 1px solid #bcb7d8;
+}
