@@ -7,6 +7,8 @@ import time
 import random
 from send_mail import sendMail
 from datetime import timedelta
+import upload
+from os import path
 
 certFile='./cert/selfsignedCertificate.pem'
 keyFile='./cert/privateKey.pem'
@@ -29,6 +31,16 @@ start_time = [0]
 check_fun = [0]  # 0 代表注册检测，1 代表忘记密码检测
 forgot_flag = [0]   # 转跳标记位
 
+@pages.route('/testUpload', methods=['GET', 'POST'])
+def testUpload():
+    if request.method == 'POST':
+        file=request.files['file']
+        file.save('./fileStorage/'+'testfile')
+        f=open('./fileStorage/'+'testfile','rb')
+        upload.upload(session.get('email'),f,'testfile')
+        return 'upload successfully'
+    else:
+        return render_template('testUpload.html')
 
 @pages.route('/')
 def to_index():
@@ -38,12 +50,15 @@ def to_index():
         return redirect(url_for('index'))
 
 
-@pages.route('/index')
+@pages.route('/index',methods=['GET','POST'])
 def index():
-    if session.get('name'):
-        return render_template('index.html', userName=session.get('name'))
+    if request.method == 'GET':
+        if session.get('name'):
+            return render_template('index.html', userName=session.get('name'))
+        else:
+            return redirect(url_for('login'))
     else:
-        return redirect(url_for('login'))
+        pass
 
 
 @pages.route('/login')
@@ -183,6 +198,7 @@ def testpage_login():
             if selectSQL.check_email(HASHER(bytes_email, encoder=nacl.encoding.HexEncoder).decode('utf-8')):
                 if selectSQL.check_password(HASHER(bytes_password, encoder=nacl.encoding.HexEncoder).decode('utf-8')):
                     session['name']=selectSQL.select_username(HASHER(bytes_email, encoder=nacl.encoding.HexEncoder).decode('utf-8'))[0]
+                    session['email']=request.form['email']
                     return redirect(url_for('index', userName=session.get('name')))
                 else:
                     flash('密码错误！')
@@ -209,7 +225,7 @@ def email_check():
                 sql.admin_link()
                 sql.userCreate(r_info[0], r_info[1], r_info[2])
                 sql.end_link()
-                session['name'] = r_info[0]
+                session['name'],session['email'] = r_info[0],r_info[3]
                 return redirect(url_for('index', userName=session.get('name')))
             else:
                 check_fun[0] = 0
