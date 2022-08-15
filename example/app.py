@@ -1,3 +1,5 @@
+import os
+
 from flask import Flask, render_template, request, redirect, url_for, flash,session
 from flask_session import Session
 from linksql import C919SQL
@@ -31,16 +33,22 @@ start_time = [0]
 check_fun = [0]  # 0 代表注册检测，1 代表忘记密码检测
 forgot_flag = [0]   # 转跳标记位
 
+
 @pages.route('/testUpload', methods=['GET', 'POST'])
 def testUpload():
     if request.method == 'POST':
         file=request.files['file']
         file.save('./fileStorage/'+'testfile')
-        f=open('./fileStorage/'+'testfile','rb')
-        upload.upload(session.get('email'),f,'testfile')
+        f=open('./fileStorage/'+'testfile', 'rb')
+        bytes_email = bytes(session.get('email'), 'utf-8')
+        email = HASHER(bytes_email, encoder=nacl.encoding.HexEncoder).decode('utf-8')
+        upload.upload(email, f, 'testfile')
+        f.close()
+        os.remove('./fileStorage/testfile')
         return 'upload successfully'
     else:
         return render_template('testUpload.html')
+
 
 @pages.route('/')
 def to_index():
@@ -50,7 +58,7 @@ def to_index():
         return redirect(url_for('index'))
 
 
-@pages.route('/index',methods=['GET','POST'])
+@pages.route('/index', methods=['GET', 'POST'])
 def index():
     if request.method == 'GET':
         if session.get('name'):

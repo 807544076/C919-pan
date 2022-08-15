@@ -1,7 +1,7 @@
 from os import path,mkdir
 from hashlib import md5
 from linksql import C919SQL
-import nacl
+from nacl.public import SealedBox
 
 tempDir='./temp/'
 fileStorage='./fileStorage/'
@@ -14,7 +14,7 @@ def dirCheck(email):
         mkdir(fileStorage)
     db=C919SQL()
     db.search_link()
-    userUUID=db.selectUserUUID(email)
+    userUUID=str(db.selectUserUID(email)[0])
     db.end_link()
     if not path.exists(fileStorage+userUUID):
         mkdir(fileStorage+userUUID)
@@ -40,7 +40,7 @@ def upload(email,file,nameString):
     userDir=dirCheck(email)
     fileName=path.splitext(nameString)[0]
     fileExtension=path.splitext(nameString)[1][1:]
-    assert fileExtension in fileTypeWhiteList,'不允许的文件类型'
+    assert fileExtension not in fileTypeWhiteList,'不允许的文件类型'
     assert len(fileName)<=45,'文件名过长,超过45个字符'
     fileContent=file.read()
     fileSize=len(fileContent)
@@ -49,16 +49,17 @@ def upload(email,file,nameString):
     if fileExist(fileHash):
         db=C919SQL()
         db.admin_link()
-        userUUID=db.selectUserUUID(email)
-        db.upload_file(fileName,userUUID,fileHash,fileSize)
+        userUUID=str(db.selectUserUID(email)[0])
+        db.upload_file(nameString, userUUID, fileHash, str(fileSize))
         db.end_link()
     else:
         db=C919SQL()
         db.admin_link()
-        userUUID=db.selectUserUUID(email)
+        userUUID=str(db.selectUserUID(email)[0])
         userPasswordHash=db.selectUserPasswordHash(email)
-        db.upload_file(fileName,userUUID,fileHash,fileSize)
+        print(nameString, userUUID, fileHash, fileSize)
+        db.upload_file(fileName, userUUID, fileHash, str(fileSize))
         db.end_link()
-        fileContentEncrypted=nacl.public.SealedBox(userPasswordHash).encrypt(fileContent)
+        # fileContentEncrypted=SealedBox(userPasswordHash).encrypt(fileContent)
         with open(userDir+'/'+fileName+fileHash,'wb') as f:
-            f.write(fileContentEncrypted)
+            f.write(fileContent)
