@@ -179,3 +179,12 @@ class C919SQL:
             self.__cursor.execute(sql)
             result = self.__cursor.fetchone()
             return result
+
+    def selectAllFileHash(self):
+        if not self.islink:
+            print('error! not linked yet')
+        else:
+            sql = "select filehash from file_info;"
+            self.__cursor.execute(sql)
+            result = self.__cursor.fetchall()
+            return result
