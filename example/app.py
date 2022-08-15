@@ -41,7 +41,7 @@ def index():
     if session.get('name'):
         return render_template('index.html', userName=session.get('name'))
     else:
-        return redirect(url_for('testpage_login'))
+        return redirect(url_for('login'))
 
 
 @pages.route('/login')
@@ -61,7 +61,7 @@ def forgot():
         return render_template('template.html')
 
 
-@pages.route('/testpage_register', methods=['GET', 'POST'])
+@pages.route('/testpage_register',  methods=['GET', 'POST'])
 def testpage_register():
     if session.get('name'):
         return redirect(url_for('index', userName=session.get('name')))
@@ -152,7 +152,7 @@ def email_check():
         return render_template('403.html')
 
 
-@pages.route('/logout', methods=['GET'])
+@pages.route('/logout', methods=['GET', 'POST'])
 def logout():
     session.clear()
     return redirect(url_for('login'))
@@ -174,4 +174,5 @@ def bad_request(error):
 
 
 if __name__ == '__main__':
-    pages.run(debug=True, ssl_context=(certFile, keyFile), port=443)
+    pages.run(debug=True,  ssl_context=(certFile,  keyFile),  port=443)
+

@@ -69,6 +69,7 @@ def init_sql(root_id, password):
       `filehash` VARCHAR(512) NOT NULL,
       `invalid_date` DATE NOT NULL,
       `isshared` TINYINT DEFAULT 0, 
+      `filesize` INT NOT NULL,
       PRIMARY KEY (`id`));
     """)
 

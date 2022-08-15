@@ -103,11 +103,11 @@ class C919SQL:
             result = self.__cursor.fetchone()
             return result
 
-    def upload_file(self, filename, owner_uid, filehash):
+    def upload_file(self, filename, owner_uid, filehash, filesize):
         if not self.islink:
             print('error! not linked yet')
         else:
-            sql = "insert into file_info(filename, owner_uid, filehash) values(%s %s %s)" % (filename, owner_uid, filehash)
+            sql = "insert into file_info(filename, owner_uid, filehash, filesize) values(%s %s %s %s)" % (filename, owner_uid, filehash, filesize)
             self.__cursor.execute(sql)
             self.__db.commit()
             print('create successfully')
