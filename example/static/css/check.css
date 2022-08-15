@@ -61,3 +61,7 @@ button {
     cursor: pointer;
     margin: 0 auto;
 }
+
+#check {
+    border-bottom: 1px solid #bcb7d8;
+}
