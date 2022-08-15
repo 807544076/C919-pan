@@ -114,7 +114,8 @@
                     <i class="font font-down" ng-class="{'unselected': ui.predicate=='reference_count' &amp;&amp; !ui.reverse}"></i>
                   </span>
                     </div>
-                    <div class="large-5 column end" ng-class="{'end': !(isVideoClipEnable &amp;&amp; canClip)}">
+                    <div class="large-6 column end" ng-class="{'end': !(isVideoClipEnable &amp;&amp; canClip)}">
+                        <!-- <button class="left fun">批量下载</button> -->
                         <button class="left fun">批量删除</button>
                     </div>
                     <!-- ngIf: (isVideoClipEnable && canClip) -->
@@ -134,7 +135,8 @@
                                     <div class="large-5 column ng-scope" ng-if="!(isVideoClipEnable &amp;&amp; canClip)">
                                         <span ng-if="ui.fileType != 'scorm'" class="left ng-scope file-size">1M</span>
                                     </div>
-                                    <div class="large-5 column end" ng-class="{'end': !(isVideoClipEnable &amp;&amp; canClip)}">
+                                    <div class="large-9 column end" ng-class="{'end': !(isVideoClipEnable &amp;&amp; canClip)}">
+                                        <button class="left fun">下载</button>
                                         <button class="left fun">删除</button>
                                         <button class="left fun">分享</button>
                                     </div>
@@ -152,7 +154,8 @@
                                     <div class="large-5 column ng-scope" ng-if="!(isVideoClipEnable &amp;&amp; canClip)">
                                         <span ng-if="ui.fileType != 'scorm'" class="left ng-scope file-size">2M</span>
                                     </div>
-                                    <div class="large-5 column end" ng-class="{'end': !(isVideoClipEnable &amp;&amp; canClip)}">
+                                    <div class="large-9 column end" ng-class="{'end': !(isVideoClipEnable &amp;&amp; canClip)}">
+                                        <button class="left fun">下载</button>
                                         <button class="left fun">删除</button>
                                         <button class="left fun">分享</button>
                                     </div>
