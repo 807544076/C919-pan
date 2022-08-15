@@ -28,6 +28,7 @@ check_num = []
 start_time = [0]
 
 
+
 @pages.route('/')
 def to_index():
     if session.get('name'):
@@ -50,7 +51,11 @@ def login():
         return redirect(url_for('index', userName=session.get('name')))
     else:
         session['csrf'] = digest.decode('utf-8')
-        return render_template('login.html', csrf=session.get('csrf'))
+        if session.get('name'):
+        return redirect(url_for('index', userName=session.get('name')))
+    else:
+        session['csrf'] = digest.decode('utf-8')
+        return render_template('login.html', csrf=session.get('csrf'), csrf=session.get('csrf'))
 
 
 @pages.route('/forgot')
@@ -61,10 +66,10 @@ def forgot():
         return render_template('template.html')
 
 
-@pages.route('/testpage_register', methods=['GET', 'POST'])
+@pages.route('/testpage_register',  methods=['GET', 'POST'])
 def testpage_register():
     if session.get('name'):
-        return redirect(url_for('index', userName=session.get('name')))
+        return return redirect(url_for('index', userName=session.get('name'), userName=session.get('name')))
     if request.method == 'POST':
         if request.form['get_csrf'] == digest.decode('utf-8'):
             bytes_email = bytes(request.form['email'], 'utf-8')
@@ -107,7 +112,7 @@ def testpage_register():
 @pages.route('/testpage_login', methods=['GET', 'POST'])
 def testpage_login():
     if session.get('name'):
-        return redirect(url_for('index', userName=session.get('name')))
+        return return redirect(url_for('index', userName=session.get('name'), userName=session.get('name')))
     if request.method == 'POST':
         if request.form['get_csrf'] == digest.decode('utf-8'):
             bytes_email = bytes(request.form['email'], 'utf-8')
@@ -168,10 +173,13 @@ def access_denied(error):
     return render_template('403.html')
 
 
+
 @pages.errorhandler(400)
 def bad_request(error):
     return render_template('400.html')
 
 
+
 if __name__ == '__main__':
-    pages.run(debug=True, ssl_context=(certFile, keyFile), port=443)
+    pages.run(debug=True,  ssl_context=(certFile,  keyFile),  port=443)
+
