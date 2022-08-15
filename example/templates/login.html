@@ -21,6 +21,7 @@
                     <input type="password" placeholder="请输入密码" value="{{request.form['password']}}" name="password" id="r_password" hidden title="密码在 6 到 36 位之间，需要强度在中等以上">
                     <span id="password_strong" hidden>...</span>
                     <input type="password" placeholder="确认密码" value="{{request.form['passwordAgain']}}" name="passwordAgain" id="r_password_again" onchange="changePassword();" hidden title="请重复你输入的密码">
+                    <input value="{{request.form['get_csrf']}}" name="get_csrf" id="r_csrf" hidden>
                     <button type="button" hidden id="r_submit" onclick="SetRegister();">注册</button>
                 </form>
             </div>
@@ -30,6 +31,7 @@
                 <form method="post" action="{{url_for('testpage_login')}}" class="login-box" name="loginForm">
                     <input type="text" placeholder="邮箱 / 电话号码" value="{{request.form['username']}}" name="email" id="l_email">
                     <input type="password" placeholder="密码" value="{{request.form['password']}}" name="password" id="l_password">
+                    <input value="{{request.form['get_csrf']}}" name="get_csrf" id="l_csrf" hidden>
                     <button type="button" onclick="SetLogin();">登录</button>
                 </form>
                 <p>找回密码</p>
@@ -70,6 +72,7 @@
         {% for message in get_flashed_messages() %} {% if message%}
         <p hidden id="flash_mes">{{ message }} </p>
         {% endif %} {% endfor %}
+        <p hidden id="csrf_text">{{ session.csrf }}</p>
     </div>
     <layer id="loding" hidden>
         <div>

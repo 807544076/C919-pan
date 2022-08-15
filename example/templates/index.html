@@ -1,24 +1,177 @@
-{% extends 'base.html' %} {% block title %}C919网盘{% endblock %} {% block header %}{{userName}}{% endblock %} {% block body %}
-<div class="container">
-    <div class="user-block">
-        <div class="user">
-            <div class="user-pic"></div>
-            <div class="user-info"></div>
-        </div>
-        <div class="divide-line"></div>
-        <div class="user-fun"></div>
-        <div class="divide-line"></div>
-        <div class="user-fun"></div>
-        <div class="divide-line"></div>
-        <div class="user-fun"></div>
-    </div>
-    <div class="divider">
-        <div class="divide-line"></div>
-    </div>
-    <div class="function-block">
-        <h1>这里是C919网盘主页面</h1>
-        <h1><a href="{{url_for('login')}}">登录</a></h1>
-    </div>
-</div>
+<!DOCTYPE html>
+<html>
 
-<link rel="stylesheet" href="static/css/index.css"> {% endblock %}
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C919作战区</title>
+    <link rel="stylesheet" href="static/css/index.css">
+    <link rel="stylesheet" href="static/css/index2.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="l-navbar" id="navbar">
+            <nav class="nav">
+                <div>
+                    <div class="nav_brand">
+                        <!-- <ion-icon name="menu-outline" class="nav_toggle" id="nav_toggle"></ion-icon> -->
+                        <ion-icon name="menu-outline" class="nav_toggle" id="nav-toggle"></ion-icon>
+                        <a href="#" class="nav_logo">C919作战区</a>
+                    </div>
+                    <div class="nav_list">
+                        <p id="welcome" hidden>您好，{{ session.name }}</p>
+                        <a href="#" class="nav_link" id="fileupload">
+                            <ion-icon name="cloud-upload" class="nav_icon"></ion-icon>
+                            <span class="nav_name">文件上传</span>
+                        </a>
+                        <a href="#" class="nav_link" id="floder">
+                            <ion-icon name="folder-outline" class="nav_icon"></ion-icon>
+                            <span class="nav_name">文件库</span>
+                        </a>
+                    </div>
+                </div>
+                <div class="nav_list">
+                    <a href="修改密码网址" class="nav_link">
+                        <ion-icon name="settings-outline" class="nav_icon"></ion-icon>
+                        <span class="nav_name">修改密码</span>
+                    </a>
+                    <a href="/logout" class="nav_link">
+                        <ion-icon name="log-out-outline" class="nav_icon"></ion-icon>
+                        <span class="nav_name">退出登陆</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+        <div class="tips">
+            <h1>C919作战区</h1>
+        </div>
+        <div class="file">
+            <div class="file-upload hidden">
+                <!--文件上传-->
+                <div class="dnd-file-uploader">
+                    <div class="drop-area">
+                        <ion-icon class="upload-icon" name="cloud-upload"></ion-icon>
+                        <p class="tip">Drag&Drop files here</p>
+                        <div class="select-file">
+                            <button class="button-select-file" ngf-select="onFileSelect($files, 5368709120)" multiple="" accept=".jpg,.jpeg,.png,.webp,.gif,.bmp,.txt,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.xml,.csv,.pdf,.rtf,.odt,.odp,.ods">
+                            <i class="font font-file-select"></i>
+                            <span>添加文件</span>
+                        </button>
+                            <!-- ngIf: useClientUploadFile -->
+                        </div>
+                        <div class="size-limit">
+                            <span>支持多个文件拖拽或点击上传，单个文件大小不能超过</span>
+                            <span class="max-upload-size ng-binding" ng-bind="5368709120|humanizeBytes">10 MB</span>
+                        </div>
+                    </div>
+                    <div class="task-list"></div>
+                </div>
+
+                <template id="template-task">
+                <div class="task">
+                    <a class="task-name" target="_blank">some file name</a>
+                    <span class="task-progress">50%</span>
+                </div>
+            </template>
+            </div>
+
+            <div class="library ">
+                <!--文件库-->
+                <div class="list-header row">
+                    <div class="large-9 column">
+                        <input type="checkbox" class="left" ng-checked="checkAllSelected()" ng-click="switchAll()">
+                        <span class="left">资源名</span>
+                        <span class="sort-operation left" ng-click="changeSort('name')">
+                    <i class="font font-up" ng-class="{'unselected': ui.predicate=='name' &amp;&amp; ui.reverse}"></i>
+                    <i class="font font-down" ng-class="{'unselected': ui.predicate=='name' &amp;&amp; !ui.reverse}"></i>
+                  </span>
+                    </div>
+                    <div class="large-6 column">
+                        <span class="left">上传时间</span>
+                        <span class="sort-operation left" ng-click="changeSort('created_at')">
+                    <i class="font font-up unselected" ng-class="{'unselected': ui.predicate=='created_at' &amp;&amp; ui.reverse}"></i>
+                    <i class="font font-down" ng-class="{'unselected': ui.predicate=='created_at' &amp;&amp; !ui.reverse}"></i>
+                  </span>
+                    </div>
+                    <!-- ngIf: !(isVideoClipEnable && canClip) -->
+                    <div class="large-5 column ng-scope" ng-if="!(isVideoClipEnable &amp;&amp; canClip)">
+                        <!-- ngIf: ui.fileType != 'scorm' -->
+                        <span ng-if="ui.fileType != 'scorm'" class="left ng-scope">大小</span>
+                        <!-- end ngIf: ui.fileType != 'scorm' -->
+                        <!-- ngIf: ui.fileType == 'scorm' -->
+                        <span class="sort-operation left" ng-click="changeSort('size')">
+                    <i class="font font-up" ng-class="{'unselected': ui.predicate=='size' &amp;&amp; ui.reverse}"></i>
+                    <i class="font font-down" ng-class="{'unselected': ui.predicate=='size' &amp;&amp; !ui.reverse}"></i>
+                  </span>
+                    </div>
+                    <!-- end ngIf: !(isVideoClipEnable && canClip) -->
+                    <div class="large-5 column end" ng-class="{'end': !(isVideoClipEnable &amp;&amp; canClip)}">
+                        <span class="left">操作</span>
+                        <span class="sort-operation left" ng-click="changeSort('reference_count')">
+                    <i class="font font-up" ng-class="{'unselected': ui.predicate=='reference_count' &amp;&amp; ui.reverse}"></i>
+                    <i class="font font-down" ng-class="{'unselected': ui.predicate=='reference_count' &amp;&amp; !ui.reverse}"></i>
+                  </span>
+                    </div>
+                    <div class="large-5 column end" ng-class="{'end': !(isVideoClipEnable &amp;&amp; canClip)}">
+                        <button class="left fun">批量删除</button>
+                    </div>
+                    <!-- ngIf: (isVideoClipEnable && canClip) -->
+                </div>
+                <div class="files">
+                    <div>
+                        <ul>
+                            <li>
+                                <div class="file-show">
+                                    <div class="large-9 column">
+                                        <input type="checkbox" class="left" ng-checked="checkAllSelected()" ng-click="switchAll()">
+                                        <span class="left file-name">xxx</span>
+                                    </div>
+                                    <div class="large-6 column">
+                                        <span class="left upload-time">2022.8.15</span>
+                                    </div>
+                                    <div class="large-5 column ng-scope" ng-if="!(isVideoClipEnable &amp;&amp; canClip)">
+                                        <span ng-if="ui.fileType != 'scorm'" class="left ng-scope file-size">1M</span>
+                                    </div>
+                                    <div class="large-5 column end" ng-class="{'end': !(isVideoClipEnable &amp;&amp; canClip)}">
+                                        <button class="left fun">删除</button>
+                                        <button class="left fun">分享</button>
+                                    </div>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="file-show">
+                                    <div class="large-9 column">
+                                        <input type="checkbox" class="left" ng-checked="checkAllSelected()" ng-click="switchAll()">
+                                        <span class="left file-name">abc</span>
+                                    </div>
+                                    <div class="large-6 column">
+                                        <span class="left upload-time">2022.8.15</span>
+                                    </div>
+                                    <div class="large-5 column ng-scope" ng-if="!(isVideoClipEnable &amp;&amp; canClip)">
+                                        <span ng-if="ui.fileType != 'scorm'" class="left ng-scope file-size">2M</span>
+                                    </div>
+                                    <div class="large-5 column end" ng-class="{'end': !(isVideoClipEnable &amp;&amp; canClip)}">
+                                        <button class="left fun">删除</button>
+                                        <button class="left fun">分享</button>
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<!--图案库-->
+<script src="https://unpkg.com/ionicons@5.1.2/dist/ionicons.js"></script>
+<script src="static/js/jquery-3.2.1.slim.min.js"></script>
+<script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+<script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+<script src="static/js/script.js"></script>
+<script src="static/js/FileUploader.js"></script>
+<script src="static/js/index.js"></script>
+
+</html>
