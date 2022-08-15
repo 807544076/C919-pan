@@ -170,3 +170,12 @@ class C919SQL:
             self.__cursor.execute(sql)
             result = self.__cursor.fetchone()
             return result
+    
+    def selectFileHash(self,filename):
+        if not self.islink:
+            print('error! not linked yet')
+        else:
+            sql = "select filehash from file_info where filename = " + filename + ";"
+            self.__cursor.execute(sql)
+            result = self.__cursor.fetchone()
+            return result
