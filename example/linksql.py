@@ -188,3 +188,12 @@ class C919SQL:
             self.__cursor.execute(sql)
             result = self.__cursor.fetchall()
             return result
+    
+    def selectUserPasswordHash(self,email):
+        if not self.islink:
+            print('error! not linked yet')
+        else:
+            sql = "select password from user_info where email = " + email + ";"
+            self.__cursor.execute(sql)
+            result = self.__cursor.fetchone()
+            return result
