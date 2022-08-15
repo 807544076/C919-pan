@@ -27,9 +27,13 @@ r_info = ['', '', '', '']   # [0]用户名，[1]hash邮箱，[2]hash密码，[3]
 check_num = []
 start_time = [0]
 
+
 @pages.route('/')
 def to_index():
-    return redirect(url_for('index'))
+    if session.get('name'):
+        return render_template('index.html', userName=session.get('name'))
+    else:
+        return redirect(url_for('index'))
 
 
 @pages.route('/index')
@@ -42,75 +46,88 @@ def index():
 
 @pages.route('/login')
 def login():
-    return render_template('login.html')
+    if session.get('name'):
+        return redirect(url_for('index', userName=session.get('name')))
+    else:
+        session['csrf'] = digest.decode('utf-8')
+        return render_template('login.html', csrf=session.get('csrf'))
 
 
 @pages.route('/forgot')
 def forgot():
-    return render_template('template.html',pageName='forgot')
+    if session.get('name'):
+        return redirect(url_for('index', userName=session.get('name')))
+    else:
+        return render_template('template.html')
 
 
-@pages.route('/testpage_register',methods=['GET', 'POST'])
+@pages.route('/testpage_register', methods=['GET', 'POST'])
 def testpage_register():
     if session.get('name'):
-        redirect(url_for('index'))
+        return redirect(url_for('index', userName=session.get('name')))
     if request.method == 'POST':
-        bytes_email = bytes(request.form['email'], 'utf-8')
-        bytes_password = bytes(request.form['password'], 'utf-8')
-        r_info[0] = (request.form['username'])
-        r_info[1] = (HASHER(bytes_email, encoder=nacl.encoding.HexEncoder).decode('utf-8'))
-        r_info[2] = (HASHER(bytes_password, encoder=nacl.encoding.HexEncoder).decode('utf-8'))
-        r_info[3] = (request.form['email'])
-        sql = C919SQL()
-        sql.search_link()
-        if not sql.select_email(r_info[1]):
-            sql.end_link()
-            check_num.append(random.randint(100000, 999999))
-            message = """
-                            <body style="height: 100vh; display: flex; justify-content: center; align-items: center; background-color: linear-gradient(200deg, #cbdcf5, #fce7ef);">
-                                <div class="show" style="font: size 12px;">
-                                    <p>您好，</p>
-                                    <p>这里是 C919 中传放心传，您的验证码为：</p><br>
-                                    <p style="font-size: 30px;"><strong>""" + str(check_num[0]) + """</strong></p><br>
-                                    <p>本验证码有效期为 5 分钟，仅可使用一次。</p>
-                                    <p>您没有收到来自 C919 的输入验证码要求，却收到了这封邮件？如果是这样，您的账号可能有安全隐患。请尽快更改您的密码。</p>
-                                    <p>诚挚祝福，</p>
-                                    <p>来自 C919 指挥部</p>
-                                </div>
-                            </body>
-                            """
-            sendMail(message, 'C919注册邮箱验证', 'C919指挥部', 'New User', request.form['email'])
-            start_time[0] = time.time()
-            return redirect(url_for('email_check'))
+        if request.form['get_csrf'] == digest.decode('utf-8'):
+            bytes_email = bytes(request.form['email'], 'utf-8')
+            bytes_password = bytes(request.form['password'], 'utf-8')
+            r_info[0] = (request.form['username'])
+            r_info[1] = (HASHER(bytes_email, encoder=nacl.encoding.HexEncoder).decode('utf-8'))
+            r_info[2] = (HASHER(bytes_password, encoder=nacl.encoding.HexEncoder).decode('utf-8'))
+            r_info[3] = (request.form['email'])
+            sql = C919SQL()
+            sql.search_link()
+            if not sql.select_email(r_info[1]):
+                sql.end_link()
+                check_num.append(random.randint(100000, 999999))
+                message = """
+                                <body style="height: 100vh; display: flex; justify-content: center; align-items: center; background-color: linear-gradient(200deg, #cbdcf5, #fce7ef);">
+                                    <div class="show" style="font: size 12px;">
+                                        <p>您好，</p>
+                                        <p>这里是 C919 中传放心传，您的验证码为：</p><br>
+                                        <p style="font-size: 30px;"><strong>""" + str(check_num[0]) + """</strong></p><br>
+                                        <p>本验证码有效期为 5 分钟，仅可使用一次。</p>
+                                        <p>您没有收到来自 C919 的输入验证码要求，却收到了这封邮件？如果是这样，您的账号可能有安全隐患。请尽快更改您的密码。</p>
+                                        <p>诚挚祝福，</p>
+                                        <p>来自 C919 指挥部</p>
+                                    </div>
+                                </body>
+                                """
+                sendMail(message, 'C919注册邮箱验证', 'C919指挥部', 'New User', request.form['email'])
+                start_time[0] = time.time()
+                return redirect(url_for('email_check'))
+            else:
+                sql.end_link()
+                flash('邮箱已注册！请重新输入')
+                return redirect(url_for('login'))
         else:
-            sql.end_link()
-            flash('邮箱已注册！请重新输入')
-            return redirect(url_for('login'))
+            return redirect(url_for('403'))
     else:
-        return render_template('login.html')
+        return redirect(url_for('login'))
 
 
 @pages.route('/testpage_login', methods=['GET', 'POST'])
 def testpage_login():
     if session.get('name'):
-        redirect(url_for('index'))
+        return redirect(url_for('index', userName=session.get('name')))
     if request.method == 'POST':
-        bytes_email = bytes(request.form['email'], 'utf-8')
-        bytes_password = bytes(request.form['password'], 'utf-8')
-        selectSQL = C919SQL()
-        selectSQL.search_link()
-        if selectSQL.select_email(HASHER(bytes_email, encoder=nacl.encoding.HexEncoder).decode('utf-8')):
-            if selectSQL.select_password(HASHER(bytes_password, encoder=nacl.encoding.HexEncoder).decode('utf-8')):
-                session['name']=selectSQL.select_username(HASHER(bytes_email, encoder=nacl.encoding.HexEncoder).decode('utf-8'))[0]
-                return redirect(url_for('index', userName=session.get('name')))
+        if request.form['get_csrf'] == digest.decode('utf-8'):
+            bytes_email = bytes(request.form['email'], 'utf-8')
+            bytes_password = bytes(request.form['password'], 'utf-8')
+            selectSQL = C919SQL()
+            selectSQL.search_link()
+            if selectSQL.select_email(HASHER(bytes_email, encoder=nacl.encoding.HexEncoder).decode('utf-8')):
+                if selectSQL.select_password(HASHER(bytes_password, encoder=nacl.encoding.HexEncoder).decode('utf-8')):
+                    session['name']=selectSQL.select_username(HASHER(bytes_email, encoder=nacl.encoding.HexEncoder).decode('utf-8'))[0]
+                    return redirect(url_for('index', userName=session.get('name')))
+                else:
+                    flash('密码错误！')
+                    return redirect(url_for('login'))
             else:
-                flash('密码错误！')
+                flash('用户不存在！')
                 return redirect(url_for('login'))
         else:
-            flash('用户不存在！')
-            return redirect(url_for('login'))
+            return redirect(url_for('403'))
     else:
-        return render_template('login.html')
+        return redirect(url_for('login'))
 
 
 @pages.route('/email_check', methods=['GET', 'POST'])
@@ -134,10 +151,12 @@ def email_check():
     else:
         return render_template('403.html')
 
-@pages.route('/logout',methods=['POST'])
+
+@pages.route('/logout', methods=['GET'])
 def logout():
     session.clear()
-    return redirect(url_for('testpage_login'))
+    return redirect(url_for('login'))
+
 
 @pages.errorhandler(404)
 def page_not_found(error):
@@ -145,12 +164,14 @@ def page_not_found(error):
 
 
 @pages.errorhandler(403)
-def accessDenied(error):
+def access_denied(error):
     return render_template('403.html')
 
+
 @pages.errorhandler(400)
-def badRequest(error):
+def bad_request(error):
     return render_template('400.html')
 
+
 if __name__ == '__main__':
-    pages.run(debug=True,ssl_context=(certFile,keyFile),port=443)
+    pages.run(debug=True, ssl_context=(certFile, keyFile), port=443)
