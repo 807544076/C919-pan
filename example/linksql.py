@@ -107,7 +107,7 @@ class C919SQL:
         if not self.islink:
             print('error! not linked yet')
         else:
-            sql = "insert into file_info(filename, owner_uid, filehash, filesize) values(%s %s %s %s)" % (filename, owner_uid, filehash, filesize)
+            sql = "insert into file_info(filename, owner_uid, filehash, filesize) values('"+filename+"', "+owner_uid+", '"+filehash+"', "+filesize+");"
             self.__cursor.execute(sql)
             self.__db.commit()
             print('create successfully')
@@ -162,11 +162,11 @@ class C919SQL:
             self.__cursor.execute(sql)
             print('change successfully')
 
-    def selectUserUUID(self, email):
+    def selectUserUID(self, email):
         if not self.islink:
             print('error! not linked yet')
         else:
-            sql = "select uuid from user_info where email = " + email + ";"
+            sql = "select uid from user_info where email = '" + email + "';"
             self.__cursor.execute(sql)
             result = self.__cursor.fetchone()
             return result
@@ -175,7 +175,7 @@ class C919SQL:
         if not self.islink:
             print('error! not linked yet')
         else:
-            sql = "select filehash from file_info where filename = " + filename + ";"
+            sql = "select filehash from file_info where filename = '" + filename + "';"
             self.__cursor.execute(sql)
             result = self.__cursor.fetchone()
             return result
@@ -193,7 +193,7 @@ class C919SQL:
         if not self.islink:
             print('error! not linked yet')
         else:
-            sql = "select password from user_info where email = " + email + ";"
+            sql = "select password from user_info where email = '" + email + "';"
             self.__cursor.execute(sql)
             result = self.__cursor.fetchone()
             return result
