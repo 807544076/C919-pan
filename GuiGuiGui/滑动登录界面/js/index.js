@@ -1,3 +1,22 @@
+// 要操作的元素
+$fileupload = $("#fileupload");
+$floder = $("#floder");
+$file_upload = $(".file-upload");
+$library = $(".library");
+
+
+//‘上传文件’按钮点击事件
+$fileupload.click(function() {
+    $library.addClass('hidden');
+    $file_upload.removeClass('hidden');
+})
+
+//‘文件库’按钮点击事件
+$floder.click(function() {
+    $file_upload.addClass('hidden');
+    $library.removeClass('hidden');
+})
+
 const showMenu = (toggleId,navbarId,bodyId)=>{
     const toggle = document.getElementById(toggleId),
     navbar = document.getElementById(navbarId);
@@ -33,3 +52,5 @@ for(i=0;i<linkCollapse.length;i++){
         rotate.classList.toggle("")
     })
 }
+
+
