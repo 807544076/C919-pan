@@ -1,7 +1,7 @@
-from fileinput import filename
 from os import path,mkdir
 from hashlib import md5
 from linksql import C919SQL
+import nacl
 
 fileStorage='./fileStorage/'
 
@@ -50,7 +50,9 @@ def upload(email,file):
         db=C919SQL()
         db.admin_link()
         userUUID=db.selectUserUUID(email)
+        userPasswordHash=db.selectUserPasswordHash(email)
         db.upload_file(fileName,userUUID,fileHash,fileSize)
         db.end_link()
+        fileContentEncrypted=nacl.public.SealedBox(userPasswordHash).encrypt(fileContent)
         with open(userDir+'/'+fileName,'wb') as f:
-            f.write(fileContent)
+            f.write(fileContentEncrypted)
