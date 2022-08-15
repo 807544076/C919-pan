@@ -152,7 +152,7 @@ def email_check():
         return render_template('403.html')
 
 
-@pages.route('/logout', methods=['POST'])
+@pages.route('/logout', methods=['GET'])
 def logout():
     session.clear()
     return redirect(url_for('login'))
@@ -164,14 +164,14 @@ def page_not_found(error):
 
 
 @pages.errorhandler(403)
-def accessDenied(error):
+def access_denied(error):
     return render_template('403.html')
 
 
 @pages.errorhandler(400)
-def badRequest(error):
+def bad_request(error):
     return render_template('400.html')
 
 
 if __name__ == '__main__':
-    pages.run(debug=True,ssl_context=(certFile, keyFile), port=443)
+    pages.run(debug=True, ssl_context=(certFile, keyFile), port=443)
