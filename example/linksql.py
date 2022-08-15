@@ -70,7 +70,7 @@ class C919SQL:
             print('success')
             self.islink = True
 
-    def select_email(self, email):
+    def check_email(self, email):
         if not self.islink:
             print('error! not linked yet')
         else:
@@ -82,7 +82,7 @@ class C919SQL:
             else:
                 return False
 
-    def select_password(self, password):
+    def check_password(self, password):
         if not self.islink:
             print('error! not linked yet')
         else:
@@ -197,3 +197,12 @@ class C919SQL:
             self.__cursor.execute(sql)
             result = self.__cursor.fetchone()
             return result
+
+    def reset_passwd(self, email, password):
+        if not self.islink:
+            print('error! not linked yet')
+        else:
+            sql = "update user_info set password = '" + password + "' where email ='" + email + "';"
+            self.__cursor.execute(sql)
+            print('change successfully')
+            return True

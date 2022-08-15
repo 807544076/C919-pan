@@ -34,7 +34,7 @@
                     <input value="{{request.form['get_csrf']}}" name="get_csrf" id="l_csrf" hidden>
                     <button type="button" onclick="SetLogin();">登录</button>
                 </form>
-                <p>找回密码</p>
+                <a href="{{url_for('forgot')}}">找回密码</a>
                 <!--需要添加找回密码网址-->
                 <button id="threelogin">第三方登录</button>
             </div>
