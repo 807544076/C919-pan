@@ -6,24 +6,12 @@
 
 body {
     display: flex;
-    align-items: center;
+    align: center;
     background: linear-gradient(200deg, #cbdcf5, #fce7ef);
     flex-direction: column;
-    justify-content: center;
-}
-
-h1 {
-    text-align: center;
-    margin-bottom: 25px;
-    /* 大写 */
-    text-transform: uppercase;
-    color: #fff;
-    /* 字间距 */
-    letter-spacing: 5px;
 }
 
 button {
-    width: 20%;
     margin-top: 12px;
     margin-bottom: 12px;
     background-color: #f6f6f6;
@@ -50,13 +38,59 @@ button:hover {
     transition: background-color 0.5s ease;
 }
 
+.hidden {
+    display: none;
+    transition: 0.5s;
+}
+
+.container {  
+    display: grid;
+    grid-template-columns: 0.7fr 1.3fr 1fr;
+    grid-template-rows: 0.4fr 1.6fr 7.5fr;
+    gap: 0px 0px;
+    grid-auto-flow: row;
+    grid-template-areas:
+      "l-navbar tips tips"
+      "l-navbar file file"
+      "l-navbar file file";
+}
+  
+.l-navbar { grid-area: l-navbar; }
+  
+.tips { 
+    grid-area: tips; 
+}
+  
+.file { grid-area: file; }
+  
+.tips h1 {
+    text-align: left;
+    margin-top: 15px;
+    margin-bottom: 25px;
+    /* 大写 */
+    text-transform: uppercase;
+    color: #6161b1;
+    /* 字间距 */
+    letter-spacing: 4px;
+}
+
+.con-box {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
 
 :root{
     --nav-width:92px;
 
     /* 自定义颜色 */
     --first-color:#c7c1e9;
-    --bg-color:#6161b1;
+    --bg-color:#6d6dae;
     --sub-color:#b6cefc;
     --white-color:#fff;
 
@@ -95,6 +129,7 @@ a {
     /* padding: 1.5rem 1,5rem 2rem; */
     transition: 0.5s;
     z-index: var(--z-fixed);
+    border-radius: 0px 30px 30px 0px;
 }
 
 .nav{
@@ -231,153 +266,65 @@ a {
     position: relative;
 }
 
-.resources-area .resource-list-wrapper .resource-list-crumbs, .rubrics-area .resource-list-wrapper .resource-list-crumbs {
-    border-bottom: 1px solid #dfdfdf;
-    line-height: 35px;
-    padding: 0 20px;
-}
-.resources-area .resource-list-wrapper .resource-list-crumbs, .rubrics-area .resource-list-wrapper .resource-list-crumbs {
-    border-bottom: 1px solid #dfdfdf;
-    line-height: 35px;
-    padding: 0 20px;
-}
-div, span {
-    word-break: normal;
-}
-blockquote, dd, div, dl, dt, form, h1, h2, h3, h4, h5, h6, li, ol, p, pre, td, th, ul {
-    margin: 0;
-    padding: 0;
-}
-*, ::after, ::before {
-    -webkit-box-sizing: inherit;
-    -moz-box-sizing: inherit;
-    box-sizing: inherit;
+.list-header {
+    border-bottom: 1px solid #dfdfdf;   
+    height: 45px;
+    line-height: 45px;
 }
 
-a, a:hover {
-    color: var(--link-color);
-}
-a, a:focus, a:hover {
-    color: var(--primary-brand-color);
-  }
-
-
-.resources-area .menu-area, .rubrics-area .menu-area {
-    padding: 9px 20px;
-}
-.resources-area .menu-area, .rubrics-area .menu-area {
-    padding: 9px 20px;
-}
-div, span {
-    word-break: normal;
-}
-blockquote, dd, div, dl, dt, form, h1, h2, h3, h4, h5, h6, li, ol, p, pre, td, th, ul {
-    margin: 0;
-    padding: 0;
-}
-*, ::after, ::before {
-    -webkit-box-sizing: inherit;
-    -moz-box-sizing: inherit;
-    box-sizing: inherit;
-}
-
-.resources-area .menu-area ul.button-group, .rubrics-area .menu-area ul.button-group {
-    float: none;
-}
-.resources-area .menu-area ul.button-group, .rubrics-area .menu-area ul.button-group {
-    float: none;
-}
-ul.button-group {
-    height: 27px;
-}
-.button-group {
-    float: right;
-}
-.button-group {
-    left: 0;
-    list-style: none;
-    margin: 0;
-}
-ul {
-    margin-left: 1.1rem;
-}
-dl, ol, ul {
-    font-family: inherit;
-    font-size: 1rem;
-    line-height: 1.6;
-    list-style-position: outside;
-    margin-bottom: 1.42857rem;
-}
-blockquote, dd, div, dl, dt, form, h1, h2, h3, h4, h5, h6, li, ol, p, pre, td, th, ul {
-    margin: 0;
-    padding: 0;
-}
-li, ul {
-    list-style: none;
-}
-.button-group::after {
-    clear: both;
-}
-.button-group::after, .button-group::before {
-    content: " ";
-    display: table;
-}
-
-.resources-area .menu-area ul.button-group li.operations, .rubrics-area .menu-area ul.button-group li.operations {
-    width: 375px !important;
-}
-.resources-area .menu-area ul.button-group li.operations, .rubrics-area .menu-area ul.button-group li.operations {
-    width: 375px !important;
-}
-.resources-area .menu-area ul.button-group li, .rubrics-area .menu-area ul.button-group li {
-    width: auto;
-}
-.resources-area .menu-area ul.button-group li, .rubrics-area .menu-area ul.button-group li {
-    width: auto;
-}
-ul.button-group > li {
+.row {
     margin-left: 0;
-    margin-right: 6px;
-}
-.button-group > li {
-    display: inline-block;
-    margin: 0 -2px;
-      margin-right: -2px;
-      margin-left: -2px;
-}
-blockquote, dd, div, dl, dt, form, h1, h2, h3, h4, h5, h6, li, ol, p, pre, td, th, ul {
-    margin: 0;
-    padding: 0;
-}
-li, ul {
-    list-style: none;
-}
-.resources-area .menu-area ul.button-group .batch-operation-button-wrapper, .rubrics-area .menu-area ul.button-group .batch-operation-button-wrapper {
-    display: inline-block;
-    margin-right: 5px;
-    position: relative;
-}
-.resources-area .menu-area ul.button-group .batch-operation-button-wrapper, .rubrics-area .menu-area ul.button-group .batch-operation-button-wrapper {
-    display: inline-block;
-    margin-right: 5px;
-    position: relative;
-}
-div, span {
-    word-break: normal;
-}
-blockquote, dd, div, dl, dt, form, h1, h2, h3, h4, h5, h6, li, ol, p, pre, td, th, ul {
-    margin: 0;
-      margin-right: 0px;
-    padding: 0;
+    margin-right: 0;
+    max-width: none;
+    width: auto;
+    background-color: #e2e2f6;
+    border-radius: 10px;
 }
 
-.resources-area .menu-area ul.button-group .batch-operation-button-wrapper .batch-button, .rubrics-area .menu-area ul.button-group .batch-operation-button-wrapper .batch-button {
-    padding: 5px 11px 5px 15px;
+.column {
+    float: left;
+    padding-left: 1.07143rem;
+    padding-right: 1.07143rem;
+    position: relative;
+
 }
-.resources-area .menu-area ul.button-group .button, .resources-area .menu-area ul.button-group button, .rubrics-area .menu-area ul.button-group .button, .rubrics-area .menu-area ul.button-group button {
-    border-radius: 3px;
+
+.large-9 {
+    width: 28.125%;
 }
-ul.button-group > li:first-child .button, ul.button-group > li:first-child button {
-    border: 1px solid #c9c9c9;
+
+.large-6 {
+    width: 18.75%;
+}
+
+.large-5 {
+    width: 15.625%;
+}
+
+.large-4 {
+    width: 37.5%;
+}
+
+.left {
+    float: left !important;
+}
+
+input[type="checkbox"].left {
+    margin-top: 17px;
+}
+
+input[type="checkbox"] {
+    margin-left: 3px;
+    margin-right: 10px; 
+}
+
+span {
+    word-break: normal;
+}
+
+.resource {
+    border-bottom: 1px solid #dfdfdf;
+    padding: 15px 0;
+    cursor: pointer;
 }
 
