@@ -12,6 +12,9 @@ PyMySQL = "*"
 pynacl = "*"
 pyopenssl = "*"
 flask_session = "*"
+itsdangerous = "*"
+rsa = "*"
+
 
 [dev-packages]
 

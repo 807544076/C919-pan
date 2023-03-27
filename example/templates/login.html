@@ -29,12 +29,12 @@
             <div class="login-box ">
                 <h1>login</h1>
                 <form method="post" action="{{url_for('testpage_login')}}" class="login-box" name="loginForm">
-                    <input type="text" placeholder="邮箱 / 电话号码" value="{{request.form['username']}}" name="email" id="l_email">
+                    <input type="text" placeholder="邮箱 / 电话号码" value="{{request.form['email']}}" name="email" id="l_email">
                     <input type="password" placeholder="密码" value="{{request.form['password']}}" name="password" id="l_password">
                     <input value="{{request.form['get_csrf']}}" name="get_csrf" id="l_csrf" hidden>
                     <button type="button" onclick="SetLogin();">登录</button>
                 </form>
-                <a href="{{url_for('forgot')}}">找回密码</a>
+                <a href="{{url_for('forgot')}}" style="color:white; text-decoration: none;">忘记密码？</a>
                 <!--需要添加找回密码网址-->
                 <button id="threelogin">第三方登录</button>
             </div>

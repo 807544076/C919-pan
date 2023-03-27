@@ -2,18 +2,102 @@
 <html>
 
 <body>
-	<h1>Show File-select Fields</h1>
+    <h1>Show File-select Fields</h1>
 
-	<h3>
-		Show a file-select field which allows
-		only one file to be chosen:
-	</h3>
-
-	<form method="post" name="filebox" ation="{{url_for('testUpload')}}" enctype="multipart/form-data">
-		<input type="file" name="file"/>
-		<br /><br />
-		<input type="submit" />
-	</form>
+    <h3>
+        Show a file-select field which allows only one file to be chosen:
+    </h3>
+    <br>
+    <div class="drop-area" style="height: 200px; width: 400px; border: 1px solid">
+        <span>drop file to here</span>
+    </div>
+    <br>
+    <form method="post" name="filebox" action="{{url_for('testUpload')}}" enctype="multipart/form-data" id="fileform">
+        <input type="file" name="file" id="file_input" />
+        <br><br>
+        <button type="button" id="file_upload" onclick="Upload();">Upload</button>
+    </form>
+    <div>
+        <br>
+        <span>Preview:</span><br>
+        <img src="" style="width:200px;height:200px; margin:0 3px" hidden/>
+    </div>
+    <p hidden id="pubk">{{pubk}}</p>
 </body>
+<script src="/static/js/jsencrypt.min.js"></script>
+<script src="/static/js/jquery-3.2.1.slim.min.js"></script>
+<script>
+    var fileList;
+    var encrypt = new JSEncrypt();
+    encrypt.setPublicKey(document.getElementById('pubk').innerHTML);
+    var area = document.querySelector('.drop-area');
+    area.addEventListener("dragenter", function(e) { //拖进
+        e.preventDefault();
+    })
+    area.addEventListener("dragover", function(e) { //拖来拖去 
+        e.preventDefault();
+    })
+    area.addEventListener('drop', function(event) {
+        event.preventDefault();
+        // 将类数组对象 转换成数组
+        // var fileList = Array.from(event.dataTransfer.files);  //  es6 格式
+        fileList = event.dataTransfer.files; // es5 格式
+        document.getElementById('file_input').files = fileList;
+        if (window.FileReader) {
+            var preview = document.querySelector('img');
+            var fr = new FileReader();
+            fr.onloadend = function(e) {
+                preview.src = e.target.result;
+                preview.removeAttribute('hidden');
+                var encrypted = encrypt.encrypt(e.target.result);
+                console.log(encrypted);
+                var encryptedfile = new File([encrypted], fileList[0].name, {
+                    type: fileList[0].type,
+                    lastModified: fileList[0].lastModified
+                })
+                var dt = new DataTransfer();
+                dt.items.add(encryptedfile);
+                document.getElementById('file_input').files = dt.files;
+            }
+            fr.readAsText(fileList[0]);
+        }
+        console.log(fileList)
+
+    })
+
+    var inputfile = document.querySelector('#file_input');
+    inputfile.addEventListener('change', function(e) {
+        fileList = e.target.files;
+        console.log(fileList[0])
+        if (window.FileReader) {
+            var preview = document.querySelector('img');
+            var fr = new FileReader();
+            fr.onloadend = function(e) {
+                preview.src = e.target.result;
+                preview.removeAttribute('hidden');
+                var encrypted = encrypt.encrypt(e.target.result);
+                console.log(encrypted);
+                var encryptedfile = new File([encrypted], fileList[0].name, {
+                    type: fileList[0].type,
+                    lastModified: fileList[0].lastModified
+                })
+                var dt = new DataTransfer();
+                dt.items.add(encryptedfile);
+                document.getElementById('file_input').files = dt.files;
+            }
+            fr.readAsText(fileList[0]);
+        }
+    })
+
+    function Upload() {
+        if (!document.getElementById('file_input').files[0]) {
+            alert('no file selected');
+        } else {
+            console.log(document.getElementById('file_input').files[0]);
+            document.getElementById('fileform').submit();
+        }
+        // 
+    }
+</script>
 
 </html>

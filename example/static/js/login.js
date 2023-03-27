@@ -40,12 +40,13 @@ $login.click(function() {
     // 注册前端慢哈希
 function SetRegister() {
     var csrf_token = $('#csrf_text').text();
+    var remail = document.getElementById('r_email').value;
     document.getElementById('r_csrf').value = csrf_token;
     $('#loding').show();
     setTimeout(function() {
         var hash_password = document.getElementById('r_password').value;
         for (var i = 0; i < 10; i++) {
-            hash_password = GetHashPwd(document.getElementById('r_email').value, hash_password);
+            hash_password = GetHashPwd(remail, hash_password);
         }
         document.getElementById('r_password').value = hash_password;
         $('.register-box').submit();
@@ -55,12 +56,13 @@ function SetRegister() {
 // 登录前端慢哈希
 function SetLogin() {
     var csrf_token = $('#csrf_text').text();
+    var lemail = document.getElementById('l_email').value;
     document.getElementById('l_csrf').value = csrf_token;
     $('#loding').show();
     setTimeout(function() {
         var hash_password = document.getElementById('l_password').value;
         for (var i = 0; i < 10; i++) {
-            hash_password = GetHashPwd(document.getElementById('l_email').value, hash_password);
+            hash_password = GetHashPwd(lemail, hash_password);
         }
         document.getElementById('l_password').value = hash_password;
         $('.login-box').submit();
@@ -94,13 +96,22 @@ $(document).ready(function() {
 $('#r_password').focusout(function() {
     $('#password_strong').removeAttr('hidden');
     var a = $('#r_password').val();
-    var re = zxcvbn(a)
+    var re = zxcvbn(a);
+    var RegExp1 = /[A-Z]/g
+    var RegExp2 = /[a-z]/g
+    var RegExp3 = /[0-9]/g
     var length_pass = false;
+    var safity_pass = false;
     var strong_pass = false;
     if (a.length >= 6 && a.length <= 36) {
         length_pass = true;
     } else {
         alert('密码长度应在 6 到 36 位之间');
+    }
+    if (RegExp1.test(a) && RegExp2.test(a) && RegExp3.test(a)) {
+        safity_pass = true;
+    } else {
+        alert('密码应包含大小写及数字');
     }
     if (re['score'] < 2) {
         $('#password_strong').text(function() {
@@ -122,7 +133,7 @@ $('#r_password').focusout(function() {
         $('#password_strong').css("background-color", "greenyellow");
         strong_pass = true;
     }
-    if (length_pass && strong_pass) {
+    if (length_pass && strong_pass && safity_pass) {
         $('#password_strong').show();
         $('#r_password_again').show();
     } else {

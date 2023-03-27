@@ -16,7 +16,7 @@ class C919SQL:
                          password = 'c919',
                          database = 'c919db')   # 账号密码仅做参考
             self.__cursor = self.__db.cursor()
-            print('success')
+            print('admin connected successfully')
             self.islink = True
 
     def execute(self, sql):
@@ -36,7 +36,7 @@ class C919SQL:
             self.__cursor = None
             self.__db = None
             self.islink = False;
-            print('close')
+            print('link closed')
 
     def search_link(self):
         if self.islink:
@@ -47,17 +47,17 @@ class C919SQL:
                          password = 'c919select',
                          database = 'c919db')   # 账号密码仅做参考
             self.__cursor = self.__db.cursor()
-            print('success')
+            print('search connected successfully')
             self.islink = True
 
     def userCreate(self, username, email, password):
         if not self.islink:
             print('error! not linked yet')
         else:
-            sql = 'insert into user_info(name,email,password) values("%s","%s","%s")' % (username,email,password)
+            sql = 'insert into user_info(name,email,password) values("%s","%s","%s")' % (username, email, password)
             self.__cursor.execute(sql)
             self.__db.commit()
-            print('create successfully')
+            print('user created successfully')
 
     def root_link(self, root, password):
         if self.islink:
@@ -67,7 +67,7 @@ class C919SQL:
                                         user=root,
                                         password=password)  # 账号密码仅做参考
             self.__cursor = self.__db.cursor()
-            print('success')
+            print('root connected successfully')
             self.islink = True
 
     def check_email(self, email):
@@ -82,11 +82,11 @@ class C919SQL:
             else:
                 return False
 
-    def check_password(self, password):
+    def check_password(self, email, password):
         if not self.islink:
             print('error! not linked yet')
         else:
-            sql = "select email from user_info where password = '" + password + "'"
+            sql = "select * from user_info where password = '" + password + "' and email = '" + email + "'"
             self.__cursor.execute(sql)
             result = self.__cursor.fetchall()
             if result:
@@ -110,7 +110,7 @@ class C919SQL:
             sql = "insert into file_info(filename, owner_uid, filehash, filesize) values('"+filename+"', "+owner_uid+", '"+filehash+"', "+filesize+");"
             self.__cursor.execute(sql)
             self.__db.commit()
-            print('create successfully')
+            print('upload file created successfully')
 
     def delete_file(self, file_id):
         if not self.islink:
@@ -118,7 +118,8 @@ class C919SQL:
         else:
             sql = "delete from file_info where id = '" + file_id + "';"
             self.__cursor.execute(sql)
-            print('delete successfully')
+            self.__db.commit()
+            print('file deleted successfully')
 
     def select_file_id(self, filename, owner_uid):
         if not self.islink:
@@ -138,7 +139,8 @@ class C919SQL:
             else:
                 sql = "update file_info set isshared = false where id = " + file_id + ";"
             self.__cursor.execute(sql)
-            print('change successfully')
+            self.__db.commit()
+            print('sharing changed successfully')
 
     def set_check(self, uid, status):
         if not self.islink:
@@ -149,7 +151,8 @@ class C919SQL:
             else:
                 sql = "update user_info set ischeck = false where uid = " + uid + ";"
             self.__cursor.execute(sql)
-            print('change successfully')
+            self.__db.commit()
+            print('checking changed successfully')
 
     def set_frozen(self, uid, status):
         if not self.islink:
@@ -160,7 +163,8 @@ class C919SQL:
             else:
                 sql = "update user_info set isfrozen = false where uid = " + uid + ";"
             self.__cursor.execute(sql)
-            print('change successfully')
+            self.__db.commit()
+            print('frozen changed successfully')
 
     def selectUserUID(self, email):
         if not self.islink:
@@ -203,6 +207,8 @@ class C919SQL:
             print('error! not linked yet')
         else:
             sql = "update user_info set password = '" + password + "' where email ='" + email + "';"
+            print(sql)
             self.__cursor.execute(sql)
-            print('change successfully')
+            self.__db.commit()
+            print('password changed successfully')
             return True

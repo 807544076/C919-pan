@@ -54,3 +54,7 @@ for (i = 0; i < linkCollapse.length; i++) {
         rotate.classList.toggle("")
     })
 }
+
+function fileUpload() {
+    $('#fileupload').click();
+}

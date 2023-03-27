@@ -3,17 +3,16 @@ from email.mime.text import MIMEText
 
 
 def sendMail(message, Subject, sender_show, recipient_show, to_addrs, cc_show=''):
-    '''
-    :param message: str 邮件内容
-    :param Subject: str 邮件主题描述
-    :param sender_show: str 发件人显示，不起实际作用如："xxx"
-    :param recipient_show: str 收件人显示，不起实际作用 多个收件人用','隔开如："xxx,xxxx"
-    :param to_addrs: str 实际收件人
-    :param cc_show: str 抄送人显示，不起实际作用，多个抄送人用','隔开如："xxx,xxxx"
-    '''
+    # :param message: str 邮件内容
+    # :param Subject: str 邮件主题描述
+    # :param sender_show: str 发件人显示，不起实际作用如："xxx"
+    # :param recipient_show: str 收件人显示，不起实际作用 多个收件人用','隔开如："xxx,xxxx"
+    # :param to_addrs: str 实际收件人
+    # :param cc_show: str 抄送人显示，不起实际作用，多个抄送人用','隔开如："xxx,xxxx"
+
     # 填写真实的发邮件服务器用户名、密码
-    user = 'c919_register@c919xxq.wecom.work'
-    password = 'hDWMAg2uYSnhBhAv'
+    user = 'c919_register@c919pan.xyz'
+    password = 'sPvxX26EiD2Kx6Us'
     # 邮件内容
     msg = MIMEText(message, 'html', _charset="utf-8")
     # 邮件主题描述
@@ -39,7 +38,7 @@ def sendMail(message, Subject, sender_show, recipient_show, to_addrs, cc_show=''
 #     # 显示发送人
 #     sender_show = 'c919_python'
 #     # 显示收件人
-#     recipient_show = '1939866964'
+#     recipient_show = '807544076'
 #     # 实际发给的收件人
-#     to_addrs = '1939866964@qq.com'
+#     to_addrs = '807544076@qq.com'
 #     sendMail(message, Subject, sender_show, recipient_show, to_addrs)

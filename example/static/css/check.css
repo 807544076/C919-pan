@@ -18,34 +18,40 @@ body {
 }
 
 input {
-    background-color: rgb(255, 255, 255);
+    /* background-color: rgb(255, 255, 255); */
     width: 100%;
-    color: #fff;
+    color: #6262ad;
     border: none;
     /* 下边框样式 */
-    border-bottom: 1px solid rgba(255, 255, 255, 0, 4);
+    /* border-bottom: 1px solid rgba(255, 255, 255, 0, 4); */
+    border-bottom: 1px solid #a262ad80;
     padding: 10px 0;
     text-indent: 10px;
     margin: 13px 0;
     font-size: 14px;
     letter-spacing: 2px;
     text-align: center;
+    outline: none;
 }
 
 input::placeholder {
     color: rgb(158, 158, 158);
 }
 
+
+/* 
 input:focus {
     color: #6262ad;
     outline: none;
     border-bottom: 1px solid #a262ad80;
     transition: 0.5s;
-}
+} */
 
+
+/* 
 input:focus::placeholder {
-    opacity: 0;
-}
+    opacity: 100;
+} */
 
 button {
     width: 70%;
