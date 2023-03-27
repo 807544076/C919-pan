@@ -14,7 +14,7 @@ pyopenssl = "*"
 flask_session = "*"
 itsdangerous = "*"
 rsa = "*"
-
+pycryptodome = "==3.4.3"
 
 [dev-packages]
 

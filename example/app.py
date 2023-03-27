@@ -11,7 +11,7 @@ import random
 from send_mail import sendMail
 from datetime import timedelta
 import upload
-from userKeyGen import create_key, get_user_pubkey, get_server_pubkey
+from userKeyGen import create_key, get_user_pubkey, get_server_pubkey, server_decrypt, aes_decrypt
 import base64
 
 certFile = './cert/c919pan.xyz_bundle.pem'
@@ -82,9 +82,13 @@ def waitfor():
 def testUpload():
     if request.method == 'POST':
         file = request.files['file']
-        filecont = file.read()
-        filecont = base64.b64decode(filecont)
-        file.save('./test.txt')
+        key = request.files['e_key']
+        iv = request.files['e_iv']
+        k = key.read().decode()
+        i = iv.read().decode()
+        key = server_decrypt(session.get('h_email'), base64.b64decode(k))
+        iv = server_decrypt(session.get('h_email'), base64.b64decode(i))
+        filecont = aes_decrypt(key, iv, file.read())
         filename = request.files['file'].filename
         filename_plain = filename[::-1].split('.', 1)[1][::-1]
         fileExtension = filename.split('.')[-1]
@@ -92,7 +96,7 @@ def testUpload():
             return '文件名过长,超过45个字符'
         if fileExtension not in fileTypeWhiteList:
             return '不允许的文件类型'
-        result = upload.upload(session.get('h_email'), filecont, filename_plain)
+        result = upload.upload(session.get('h_email'), filecont, filename_plain)    # filecont is bytes
         return result
     else:
         sql = C919SQL()

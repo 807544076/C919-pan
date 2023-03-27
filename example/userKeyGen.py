@@ -1,6 +1,8 @@
 from os import path, mkdir
 import rsa
-from cryptography.hazmat.bindings import openssl
+from Cryptodome.Cipher import AES
+from Cryptodome.Random import get_random_bytes
+from linksql import C919SQL
 
 
 keyPath = './userKey/'
@@ -52,3 +54,45 @@ def get_server_pubkey(uid):
     content = f.read()
     f.close()
     return content.decode('utf-8')
+
+
+def server_decrypt(email, fileContent):
+    db = C919SQL()
+    db.search_link()
+    userUUID = str(db.selectUserUID(email)[0])
+    db.end_link()
+    f = open('./userKey/' + userUUID + '/server/private_key.key', 'rb')
+    prik = f.read()
+    f.close()
+    privatekey = rsa.PrivateKey.load_pkcs1(prik)
+    try:
+        fileContent = rsa.decrypt(fileContent, privatekey)
+    except:
+        return False
+    return fileContent
+
+
+def aes_decrypt(key, iv, message):
+    try:
+        decipher = AES.new(key, AES.MODE_OFB, iv)
+        re = decipher.decrypt(message)
+        return re
+    except Exception as e:
+        print(str(e))
+        return False
+
+
+# key = get_random_bytes(32)
+# iv = get_random_bytes(16)
+# print()
+# cipher = AES.new(key, AES.MODE_OFB, iv)
+# message = b'aassddffgghhjjkkllmmnnbbvvccxxzzqqwweerrttyyuuiioopp'
+# c = cipher.encrypt(message)
+# print(c)
+# decipher = AES.new(key, AES.MODE_OFB, iv)
+# m = decipher.decrypt(c)
+# print(m)
+
+
+
+

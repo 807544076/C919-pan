@@ -14,6 +14,8 @@
     <br>
     <form method="post" name="filebox" action="{{url_for('testUpload')}}" enctype="multipart/form-data" id="fileform">
         <input type="file" name="file" id="file_input" />
+        <input type='file' id="e_key" name="e_key" hidden/>
+        <input type='file' id="e_iv" name="e_iv" hidden/>
         <br><br>
         <button type="button" id="file_upload" onclick="Upload();">Upload</button>
     </form>
@@ -25,11 +27,42 @@
     <p hidden id="pubk">{{pubk}}</p>
 </body>
 <script src="/static/js/jsencrypt.min.js"></script>
+<script type="text/javascript" src="https://cdn.rawgit.com/ricmoo/aes-js/e27b99df/index.js"></script>
 <script src="/static/js/jquery-3.2.1.slim.min.js"></script>
 <script>
+    function getRandomHex(n) {
+        str = '';
+        for (var i = 0; i < n; i++) {
+            a = Math.round(Math.random() * 7).toString();
+            str += a;
+        }
+        return str;
+    }
+
+    var secret_key = aesjs.utils.hex.toBytes(getRandomHex(64));
+    secret_key = Uint8Array.from(secret_key);
+    var iv = aesjs.utils.hex.toBytes(getRandomHex(32));
+    iv = Uint8Array.from(iv);
+    var dt_f = new DataTransfer();
+    var dt_k = new DataTransfer();
+    var dt_i = new DataTransfer();
+
+    function aes_encrypt(message, key, iv) {
+        // 将消息转换为Uint8Array
+        var encoder = new TextEncoder();
+        var data = encoder.encode(message);
+        // 创建AES-OFB对象
+        var aesOfb = new aesjs.ModeOfOperation.ofb(key, iv);
+        // 加密数据
+        var encrypted = aesOfb.encrypt(data);
+        // 返回加密后的数据和初始向量
+        return encrypted;
+    }
+
     var fileList;
     var encrypt = new JSEncrypt();
     encrypt.setPublicKey(document.getElementById('pubk').innerHTML);
+
     var area = document.querySelector('.drop-area');
     area.addEventListener("dragenter", function(e) { //拖进
         e.preventDefault();
@@ -49,8 +82,9 @@
             fr.onloadend = function(e) {
                 preview.src = e.target.result;
                 preview.removeAttribute('hidden');
+                var aes_result = aes_encrypt(e.target.result, key);
+                //
                 var encrypted = encrypt.encrypt(e.target.result);
-                console.log(encrypted);
                 var encryptedfile = new File([encrypted], fileList[0].name, {
                     type: fileList[0].type,
                     lastModified: fileList[0].lastModified
@@ -59,7 +93,7 @@
                 dt.items.add(encryptedfile);
                 document.getElementById('file_input').files = dt.files;
             }
-            fr.readAsText(fileList[0]);
+            fr.readAsDataURL(fileList[0]);
         }
         console.log(fileList)
 
@@ -75,17 +109,34 @@
             fr.onloadend = function(e) {
                 preview.src = e.target.result;
                 preview.removeAttribute('hidden');
-                var encrypted = encrypt.encrypt(e.target.result);
-                console.log(encrypted);
-                var encryptedfile = new File([encrypted], fileList[0].name, {
+            }
+            fr.readAsDataURL(fileList[0]);
+
+            var fr_e = new FileReader();
+            fr_e.onloadend = function(e) {
+                var aes_result = aes_encrypt(e.target.result, secret_key, iv);
+                var encrypted_key = encrypt.encrypt(new TextDecoder().decode(secret_key));
+                var encrypted_iv = encrypt.encrypt(new TextDecoder().decode(iv));
+                let key_blob = new File([encrypted_key], "key", {
+                    type: "text/plain",
+                    lastModified: new Date()
+                });
+                let iv_blob = new File([encrypted_iv], "iv", {
+                    type: "text/plain",
+                    lastModified: new Date()
+                });
+                var encryptedfile = new File([aes_result], fileList[0].name, {
                     type: fileList[0].type,
                     lastModified: fileList[0].lastModified
                 })
-                var dt = new DataTransfer();
-                dt.items.add(encryptedfile);
-                document.getElementById('file_input').files = dt.files;
+                dt_f.items.add(encryptedfile);
+                document.getElementById('file_input').files = dt_f.files;
+                dt_k.items.add(key_blob);
+                document.getElementById('e_key').files = dt_k.files;
+                dt_i.items.add(iv_blob);
+                document.getElementById('e_iv').files = dt_i.files;
             }
-            fr.readAsText(fileList[0]);
+            fr_e.readAsText(fileList[0]);
         }
     })
 

@@ -1,8 +1,7 @@
 from os import path, mkdir
 from hashlib import sha256
-
 import rsa
-
+from userKeyGen import server_decrypt
 from linksql import C919SQL
 from nacl.public import SealedBox
 
@@ -49,15 +48,6 @@ def upload(email, fileContent, nameString):
     fileSize = len(fileContent)  # 文件大小
     assert fileSize <= 1024 * 1024 * 10, '文件过大,超过10MB限制'
     userUUID = str(db.selectUserUID(email)[0])
-    f = open('./userKey/' + userUUID + '/server/private_key.key', 'rb')
-    prik = f.read()
-    f.close()
-    privatekey = rsa.PrivateKey.load_pkcs1(prik)
-    try:
-        fileContent = rsa.decrypt(fileContent, privatekey)
-        print(fileContent)
-    except:
-        return 'decrypt failed'
     fileHash = sha256(fileContent).hexdigest()  # 文件内容hash
     if fileExist(fileHash):  # 快速上传（拷贝记录）
         print('fast upload')
