@@ -13,6 +13,7 @@ from datetime import timedelta
 import upload
 from userKeyGen import create_key, get_user_pubkey, get_server_pubkey, server_decrypt, aes_decrypt
 import base64
+import binascii
 
 certFile = './cert/c919pan.xyz_bundle.pem'
 keyFile = './cert/c919pan.xyz.key'
@@ -84,11 +85,17 @@ def testUpload():
         file = request.files['file']
         key = request.files['e_key']
         iv = request.files['e_iv']
-        k = key.read().decode()
-        i = iv.read().decode()
-        key = server_decrypt(session.get('h_email'), base64.b64decode(k))
-        iv = server_decrypt(session.get('h_email'), base64.b64decode(i))
-        filecont = aes_decrypt(key, iv, file.read())
+        k = base64.b64decode(key.read())
+        i = base64.b64decode(iv.read())
+        c = base64.b64decode(file.read())
+        key = server_decrypt(session.get('h_email'), k)
+        iv = server_decrypt(session.get('h_email'), i)
+        key = binascii.unhexlify(key)
+        iv = binascii.unhexlify(iv)
+        filecont = aes_decrypt(key, iv, c)  # c is bytes
+        # with open('./1.png', 'wb') as f:
+        #     f.write(binascii.unhexlify(filecont.decode()))
+        filecont = binascii.unhexlify(filecont.decode())    # filecont is original bytes
         filename = request.files['file'].filename
         filename_plain = filename[::-1].split('.', 1)[1][::-1]
         fileExtension = filename.split('.')[-1]

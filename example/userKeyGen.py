@@ -2,6 +2,7 @@ from os import path, mkdir
 import rsa
 from Cryptodome.Cipher import AES
 from Cryptodome.Random import get_random_bytes
+from Cryptodome.Util.Padding import pad, unpad
 from linksql import C919SQL
 
 
@@ -76,7 +77,7 @@ def aes_decrypt(key, iv, message):
     try:
         decipher = AES.new(key, AES.MODE_OFB, iv)
         re = decipher.decrypt(message)
-        return re
+        return unpad(re, 16)
     except Exception as e:
         print(str(e))
         return False
