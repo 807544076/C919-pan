@@ -12,9 +12,9 @@ class C919SQL:
             print('already linked')
         else:
             self.__db = pymysql.connect(host='localhost',
-                         user = 'c919',
-                         password = 'c919',
-                         database = 'c919db')   # 账号密码仅做参考
+                                        user='c919',
+                                        password='c919',
+                                        database='c919db')  # 账号密码仅做参考
             self.__cursor = self.__db.cursor()
             print('admin connected successfully')
             self.islink = True
@@ -43,9 +43,9 @@ class C919SQL:
             print('already linked')
         else:
             self.__db = pymysql.connect(host='localhost',
-                         user = 'c919select',
-                         password = 'c919select',
-                         database = 'c919db')   # 账号密码仅做参考
+                                        user='c919select',
+                                        password='c919select',
+                                        database='c919db')  # 账号密码仅做参考
             self.__cursor = self.__db.cursor()
             print('search connected successfully')
             self.islink = True
@@ -103,11 +103,11 @@ class C919SQL:
             result = self.__cursor.fetchone()
             return result
 
-    def upload_file(self, filename, owner_uid, filehash, filesize):
+    def upload_file(self, filename, owner_uid, filehash, filesize, stamp):
         if not self.islink:
             print('error! not linked yet')
         else:
-            sql = "insert into file_info(filename, owner_uid, filehash, filesize) values('"+filename+"', "+owner_uid+", '"+filehash+"', "+filesize+");"
+            sql = "insert into file_info(filename, owner_uid, filehash, filesize, stamp) values('" + filename + "', " + owner_uid + ", '" + filehash + "', " + filesize + ", '" + stamp + "');"
             self.__cursor.execute(sql)
             self.__db.commit()
             print('upload file created successfully')
@@ -174,8 +174,8 @@ class C919SQL:
             self.__cursor.execute(sql)
             result = self.__cursor.fetchone()
             return result
-    
-    def selectFileHash(self,filename):
+
+    def selectFileHash(self, filename):
         if not self.islink:
             print('error! not linked yet')
         else:
@@ -192,8 +192,8 @@ class C919SQL:
             self.__cursor.execute(sql)
             result = self.__cursor.fetchall()
             return result
-    
-    def selectUserPasswordHash(self,email):
+
+    def selectUserPasswordHash(self, email):
         if not self.islink:
             print('error! not linked yet')
         else:
@@ -212,3 +212,12 @@ class C919SQL:
             self.__db.commit()
             print('password changed successfully')
             return True
+
+    def select_all_stamp(self):
+        if not self.islink:
+            print('error! not linked yet')
+        else:
+            sql = "select stamp from file_info;"
+            self.__cursor.execute(sql)
+            result = self.__cursor.fetchall()
+            return result

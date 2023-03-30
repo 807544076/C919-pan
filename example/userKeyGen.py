@@ -1,8 +1,9 @@
-from os import path, mkdir
+from os import path, mkdir, urandom
 import rsa
 from Cryptodome.Cipher import AES
 from Cryptodome.Random import get_random_bytes
 from Cryptodome.Util.Padding import pad, unpad
+import hashlib
 from linksql import C919SQL
 
 
@@ -57,20 +58,83 @@ def get_server_pubkey(uid):
     return content.decode('utf-8')
 
 
-def server_decrypt(email, fileContent):
-    db = C919SQL()
-    db.search_link()
-    userUUID = str(db.selectUserUID(email)[0])
-    db.end_link()
-    f = open('./userKey/' + userUUID + '/server/private_key.key', 'rb')
+def server_decrypt(uid, fileContent):
+    f = open('./userKey/' + uid + '/server/private_key.key', 'rb')
     prik = f.read()
     f.close()
     privatekey = rsa.PrivateKey.load_pkcs1(prik)
     try:
         fileContent = rsa.decrypt(fileContent, privatekey)
-    except:
+    except Exception as e:
+        print("Error:" + str(e))
         return False
     return fileContent
+
+
+def server_encrypt(uid, fileContent):
+    f = open('./userKey/' + uid + '/server/public_key.key', 'rb')
+    pubk = f.read()
+    f.close()
+    publickey = rsa.PublicKey.load_pkcs1(pubk)
+    try:
+        fileContent = rsa.encrypt(fileContent, publickey)
+    except Exception as e:
+        print("Error:" + str(e))
+        return False
+    return fileContent
+
+
+def user_decrypt(uid, fileContent):
+    f = open('./userKey/' + uid + '/user/private_key.key', 'rb')
+    prik = f.read()
+    f.close()
+    privatekey = rsa.PrivateKey.load_pkcs1(prik)
+    try:
+        fileContent = rsa.decrypt(fileContent, privatekey)
+    except Exception as e:
+        print("Error:" + str(e))
+        return False
+    return fileContent
+
+
+def user_encrypt(uid, fileContent):
+    f = open('./userKey/' + uid + '/user/public_key.key', 'rb')
+    pubk = f.read()
+    f.close()
+    publickey = rsa.PublicKey.load_pkcs1(pubk)
+    try:
+        fileContent = rsa.encrypt(fileContent, publickey)
+    except Exception as e:
+        print("Error:" + str(e))
+        return False
+    return fileContent
+
+
+def aes_keygen(uid, stamp):
+    # gen key encrypt
+    psd = urandom(32)
+    salt = urandom(32)
+    key = hashlib.pbkdf2_hmac("sha256", psd, salt, 4096, 32)
+    key_e = user_encrypt(uid, key)
+    # gen iv encrypt
+    psd = urandom(32)
+    salt = urandom(32)
+    iv = hashlib.pbkdf2_hmac("sha256", psd, salt, 4096, 16)
+    iv_e = user_encrypt(uid, iv)
+    # save key, iv
+    aes_path = keyPath + str(uid) + '/file_aes/' + stamp + '/'
+    mkdir(aes_path)
+    with open(aes_path + 'key.key', 'wb') as f:
+        f.write(key_e)
+    with open(aes_path + 'iv.key', 'wb') as f:
+        f.write(iv_e)
+    return key, iv
+
+
+def aes_encrypt(key, iv, message):
+    cipher = AES.new(key, AES.MODE_OFB, iv)
+    cipher_text = cipher.encrypt(message)
+    return cipher_text
 
 
 def aes_decrypt(key, iv, message):
@@ -79,15 +143,16 @@ def aes_decrypt(key, iv, message):
         re = decipher.decrypt(message)
         return unpad(re, 16)
     except Exception as e:
-        print(str(e))
+        print("Error:" + str(e))
         return False
 
 
-# key = get_random_bytes(32)
-# iv = get_random_bytes(16)
-# print()
+# print(aes_keygen()[0])
+# key, iv = aes_keygen()
+# print(key, iv)
+# print(key.hex(), iv.hex())
 # cipher = AES.new(key, AES.MODE_OFB, iv)
-# message = b'aassddffgghhjjkkllmmnnbbvvccxxzzqqwweerrttyyuuiioopp'
+# message = b'aaabbbccc'
 # c = cipher.encrypt(message)
 # print(c)
 # decipher = AES.new(key, AES.MODE_OFB, iv)

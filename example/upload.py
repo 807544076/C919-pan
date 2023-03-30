@@ -1,9 +1,8 @@
 from os import path, mkdir
 from hashlib import sha256
-import rsa
-from userKeyGen import server_decrypt
+import random
+from userKeyGen import aes_encrypt, aes_keygen
 from linksql import C919SQL
-from nacl.public import SealedBox
 
 tempDir = './temp/'
 fileStorage = './fileStorage/'
@@ -41,6 +40,30 @@ def fileExist(newFileHash):  # hash相同即可快速上传
         return False
 
 
+def genstamp():
+    stamp = ''.join(random.sample(
+        ['z', 'y', 'x', 'w', 'v', 'u', 't', 's', 'r', 'q', 'p', 'o', 'n', 'm', 'l', 'k', 'j', 'i', 'h', 'g', 'f',
+         'e', 'd', 'c', 'b', 'a', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0'], 20))
+    return stamp
+
+
+def gen_check_stamp():
+    db = C919SQL()
+    db.search_link()
+    stamp = genstamp()
+    stamps = db.select_all_stamp()
+    db.end_link()
+    flag = True
+    while flag and stamps:
+        for st in stamps:
+            if st[0] == stamp:
+                stamp = genstamp()
+                break
+            else:
+                flag = False
+    return stamp
+
+
 def upload(email, fileContent, nameString):
     db = C919SQL()
     db.admin_link()
@@ -51,14 +74,14 @@ def upload(email, fileContent, nameString):
     fileHash = sha256(fileContent).hexdigest()  # 文件内容hash
     if fileExist(fileHash):  # 快速上传（拷贝记录）
         print('fast upload')
-        db.upload_file(nameString, userUUID, fileHash, str(fileSize))
-        db.end_link()
+        # db.upload_file(nameString, userUUID, fileHash, str(fileSize))
     else:
-        # userPasswordHash = db.selectUserPasswordHash(email)
-        print(nameString, userUUID, fileHash, fileSize)
-        db.upload_file(nameString, userUUID, fileHash, str(fileSize))
-        db.end_link()
-        # fileContentEncrypted=SealedBox(userPasswordHash).encrypt(fileContent)
-        with open(userDir + '/' + nameString + fileHash, 'wb') as f:
-            f.write(fileContent)
+        stamp = gen_check_stamp()  # 为每个文件生成独特的stamp
+        print(nameString, userUUID, fileHash, fileSize, stamp)
+        db.upload_file(nameString, userUUID, fileHash, str(fileSize), stamp)
+        key, iv = aes_keygen(userUUID, stamp)  # 生成文件对应的aes密钥
+        en_file_content = aes_encrypt(key, iv, fileContent)  # 对文件内容进行加密
+        with open(userDir + '/' + nameString + fileHash, 'wb') as f:    # 保存加密的文件
+            f.write(en_file_content)
+    db.end_link()
     return 'success'

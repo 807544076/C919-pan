@@ -82,20 +82,25 @@ def waitfor():
 @pages.route('/testUpload', methods=['GET', 'POST'])
 def testUpload():
     if request.method == 'POST':
+        db = C919SQL()
+        db.search_link()
+        userUUID = str(db.selectUserUID(session.get('h_email'))[0])
+        db.end_link()
+        # get file(aes encrypt), key(rsa encrypt), iv(rsa encrypt)
         file = request.files['file']
         key = request.files['e_key']
         iv = request.files['e_iv']
         k = base64.b64decode(key.read())
         i = base64.b64decode(iv.read())
         c = base64.b64decode(file.read())
-        key = server_decrypt(session.get('h_email'), k)
-        iv = server_decrypt(session.get('h_email'), i)
+        # key, iv ras decrypt
+        key = server_decrypt(userUUID, k)
+        iv = server_decrypt(userUUID, i)
         key = binascii.unhexlify(key)
         iv = binascii.unhexlify(iv)
+        # file aes decrypt
         filecont = aes_decrypt(key, iv, c)  # c is bytes
-        # with open('./1.png', 'wb') as f:
-        #     f.write(binascii.unhexlify(filecont.decode()))
-        filecont = binascii.unhexlify(filecont.decode())    # filecont is original bytes
+        filecont = binascii.unhexlify(filecont.decode())    # filecont is original bytes(non-encrypt)
         filename = request.files['file'].filename
         filename_plain = filename[::-1].split('.', 1)[1][::-1]
         fileExtension = filename.split('.')[-1]
@@ -110,7 +115,8 @@ def testUpload():
         sql.admin_link()
         uid = sql.selectUserUID(session.get('h_email'))[0]
         sql.end_link()
-        pubk = get_server_pubkey(uid)
+        pubk = get_server_pubkey(uid)   # sent pubk
+        # todo: sign
         return render_template('testUpload.html', pubk=pubk)
 
 
