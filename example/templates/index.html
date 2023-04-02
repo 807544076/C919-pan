@@ -55,12 +55,14 @@
                         <ion-icon class="upload-icon" name="cloud-upload"></ion-icon>
                         <p class="tip">Drag&Drop files here</p>
                         <div class="select-file">
-                            <button class="button-select-file" onclick="fileUpload()" type="button">
+                            <button class="button-select-file" onclick="document.getElementById('file_input').click();" type="button">
                             <i class="font font-file-select"></i>
                             <span>添加文件</span>
                             </button>
-                            <form method="post" name="filebox" action="{{url_for('index')}}" enctype="multipart/form-data">
-                                <input type="file" name="fileupload" id="fileupload" />
+                            <form method="post" name="filebox" action="{{url_for('index')}}" enctype="multipart/form-data" id="fileform" hidden>
+                                <input type="file" name="file" id="file_input" />
+                                <input type='file' id="e_key" name="e_key" />
+                                <input type='file' id="e_iv" name="e_iv" />
                             </form>
                             <!-- ngIf: useClientUploadFile -->
                         </div>
@@ -69,7 +71,14 @@
                             <span class="max-upload-size ng-binding" ng-bind="5368709120|humanizeBytes">10 MB</span>
                         </div>
                     </div>
-                    <div class="task-list"></div>
+                    <div>
+                        <br>
+                        <button class="button-select-file" onclick="fileUpload();" type="button"> 上 传 </button>
+                        <br>
+                        <span class="task">Preview:</span><br>
+                        <img src="" style="width:200px;height:200px; margin:0 3px" hidden/>
+                    </div>
+                    <p hidden id="pubk">{{pubk}}</p>
                 </div>
 
                 <template id="template-task">
@@ -126,58 +135,51 @@
                 <div class="files">
                     <div>
                         <ul>
+                            {%if filelist%} {%for file in filelist%}
                             <li>
                                 <div class="file-show">
                                     <div class="large-9 column">
                                         <input type="checkbox" class="left" ng-checked="checkAllSelected()" ng-click="switchAll()">
-                                        <span class="left file-name">xxx</span>
+                                        <span class="left file-name">{{file[0]}}</span>
                                     </div>
                                     <div class="large-6 column">
-                                        <span class="left upload-time">2022.8.15</span>
+                                        <span class="left upload-time">{{file[1]}}</span>
                                     </div>
                                     <div class="large-5 column ng-scope" ng-if="!(isVideoClipEnable &amp;&amp; canClip)">
-                                        <span ng-if="ui.fileType != 'scorm'" class="left ng-scope file-size">1M</span>
+                                        <span ng-if="ui.fileType != 'scorm'" class="left ng-scope file-size">
+                                            {%if (file[2] / 1024) > 100%}
+                                                {{(file[2] / (1024*1024)) | round(2)}} MB
+                                            {%else%}
+                                                {{(file[2] / (1024)) | round(2)}} KB
+                                            {%endif%}
+                                        </span>
                                     </div>
                                     <div class="large-9 column end" ng-class="{'end': !(isVideoClipEnable &amp;&amp; canClip)}">
-                                        <button class="left fun">下载</button>
+                                        <button class="left fun">详情</button>
                                         <button class="left fun">删除</button>
                                         <button class="left fun">分享</button>
                                     </div>
                                 </div>
                             </li>
-                            <li>
-                                <div class="file-show">
-                                    <div class="large-9 column">
-                                        <input type="checkbox" class="left" ng-checked="checkAllSelected()" ng-click="switchAll()">
-                                        <span class="left file-name">abc</span>
-                                    </div>
-                                    <div class="large-6 column">
-                                        <span class="left upload-time">2022.8.15</span>
-                                    </div>
-                                    <div class="large-5 column ng-scope" ng-if="!(isVideoClipEnable &amp;&amp; canClip)">
-                                        <span ng-if="ui.fileType != 'scorm'" class="left ng-scope file-size">2M</span>
-                                    </div>
-                                    <div class="large-9 column end" ng-class="{'end': !(isVideoClipEnable &amp;&amp; canClip)}">
-                                        <button class="left fun">下载</button>
-                                        <button class="left fun">删除</button>
-                                        <button class="left fun">分享</button>
-                                    </div>
-                                </div>
-                            </li>
+                            {%endfor%} {%endif%}
                         </ul>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    {% for message in get_flashed_messages() %} {% if message%}
+    <p hidden id="flash_mes">{{ message }}</p>
+    {% endif %} {% endfor %}
 </body>
 <!--图案库-->
 <script src="https://unpkg.com/ionicons@5.1.2/dist/ionicons.js"></script>
 <script src="static/js/jquery-3.2.1.slim.min.js"></script>
 <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-<script src="static/js/script.js"></script>
-<script src="static/js/FileUploader.js"></script>
+<!-- <script src="static/js/script.js"></script> -->
+<script src="/static/js/crypto-js.js"></script>
+<script src="/static/js/jsencrypt.min.js"></script>
 <script src="static/js/index.js"></script>
 
 </html>

@@ -28,7 +28,6 @@ def fileExist(newFileHash):  # hash相同即可快速上传
     allHashRecord = db.selectAllFileHash()
     flag = False
     for item in allHashRecord:
-        print(item[0])
         if item[0] == newFileHash:
             flag = True
             break
@@ -78,10 +77,10 @@ def upload(email, fileContent, nameString):
     else:
         stamp = gen_check_stamp()  # 为每个文件生成独特的stamp
         print(nameString, userUUID, fileHash, fileSize, stamp)
-        db.upload_file(nameString, userUUID, fileHash, str(fileSize), stamp)
         key, iv = aes_keygen(userUUID, stamp)  # 生成文件对应的aes密钥
         en_file_content = aes_encrypt(key, iv, fileContent)  # 对文件内容进行加密
         with open(userDir + '/' + nameString + fileHash, 'wb') as f:    # 保存加密的文件
             f.write(en_file_content)
+        db.upload_file(nameString, userUUID, fileHash, str(fileSize), stamp)
     db.end_link()
     return 'success'

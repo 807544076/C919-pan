@@ -221,3 +221,12 @@ class C919SQL:
             self.__cursor.execute(sql)
             result = self.__cursor.fetchall()
             return result
+
+    def select_all_file(self, uid):
+        if not self.islink:
+            print('error! not linked yet')
+        else:
+            sql = "select filename, upload_date, filesize from file_info where owner_uid = " + str(uid) + ";"
+            self.__cursor.execute(sql)
+            result = self.__cursor.fetchall()
+            return result

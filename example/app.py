@@ -82,6 +82,7 @@ def waitfor():
 @pages.route('/testUpload', methods=['GET', 'POST'])
 def testUpload():
     if request.method == 'POST':
+        return 'Let\'s back to Index'
         db = C919SQL()
         db.search_link()
         userUUID = str(db.selectUserUID(session.get('h_email'))[0])
@@ -117,7 +118,8 @@ def testUpload():
         sql.end_link()
         pubk = get_server_pubkey(uid)   # sent pubk
         # todo: sign
-        return render_template('testUpload.html', pubk=pubk)
+        # return render_template('testUpload.html', pubk=pubk)
+        return '<h1> Congratulations! </h1><h1> You find an Easter egg! </h1><h1> Have a nice day! </h1>'
 
 
 @pages.route('/')
@@ -128,15 +130,51 @@ def to_index():
         return redirect(url_for('index'))
 
 
-@pages.route('/index')
+@pages.route('/index', methods=['GET', 'POST'])
 def index():
     if request.method == 'GET':
         session['check_fun'] = 0  # 0 代表注册检测，1 代表忘记密码检测
         session['forgot_flag'] = 0  # 转跳标记位
         if session.get('name'):
-            return render_template('index.html', userName=session.get('name'))
+            db = C919SQL()
+            db.search_link()
+            re = db.select_all_file(session.get('uid'))
+            pubk = get_server_pubkey(session.get('uid'))  # sent pubk
+            return render_template('index.html', userName=session.get('name'), filelist=re, pubk=pubk)
         else:
             return redirect(url_for('login'))
+    if request.method == 'POST':
+        db = C919SQL()
+        db.search_link()
+        userUUID = str(db.selectUserUID(session.get('h_email'))[0])
+        db.end_link()
+        # get file(aes encrypt), key(rsa encrypt), iv(rsa encrypt)
+        file = request.files['file']
+        key = request.files['e_key']
+        iv = request.files['e_iv']
+        k = base64.b64decode(key.read())
+        i = base64.b64decode(iv.read())
+        c = base64.b64decode(file.read())
+        # key, iv ras decrypt
+        key = server_decrypt(userUUID, k)
+        iv = server_decrypt(userUUID, i)
+        key = binascii.unhexlify(key)
+        iv = binascii.unhexlify(iv)
+        # file aes decrypt
+        filecont = aes_decrypt(key, iv, c)  # c is bytes
+        filecont = binascii.unhexlify(filecont.decode())    # filecont is original bytes(non-encrypt)
+        filename = request.files['file'].filename
+        filename_plain = filename[::-1].split('.', 1)[1][::-1]
+        fileExtension = filename.split('.')[-1]
+        if len(filename) > 45:
+            flash('文件名过长,超过45个字符')
+            return redirect(url_for('index'))
+        if fileExtension not in fileTypeWhiteList:
+            flash('不允许的文件类型')
+            return redirect(url_for('index'))
+        result = upload.upload(session.get('h_email'), filecont, filename_plain)    # filecont is bytes
+        flash('上传成功！')
+        return redirect(url_for('index'))
 
 
 @pages.route('/login')

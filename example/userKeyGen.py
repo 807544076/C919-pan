@@ -13,10 +13,12 @@ keyPath = './userKey/'
 def create_key(uid):
     user_path = keyPath + str(uid) + '/user/'
     server_path = keyPath + str(uid) + '/server/'
+    file_path = keyPath + str(uid) + '/file_aes/'
     if not path.exists(keyPath + str(uid)):
         mkdir(keyPath + str(uid))
         mkdir(user_path)
         mkdir(server_path)
+        mkdir(file_path)
 
     (u_pubkey, u_privkey) = rsa.newkeys(1024)  # 客户端公私钥对
     (s_pubkey, s_privkey) = rsa.newkeys(1024)  # 服务端公私钥对
