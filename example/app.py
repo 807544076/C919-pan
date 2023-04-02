@@ -1,6 +1,3 @@
-import os
-
-import rsa
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_session import Session
 from linksql import C919SQL
@@ -18,7 +15,6 @@ import binascii
 certFile = './cert/c919pan.xyz_bundle.pem'
 keyFile = './cert/c919pan.xyz.key'
 fileTypeWhiteList = ['jpg', 'png', 'gif', 'jpeg', 'bmp', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt']
-
 
 HASHER = nacl.hash.sha512
 hash_msg = bytes(str(time.time()), 'utf-8')
@@ -41,7 +37,7 @@ def mail_content_link():
                                     <body style="height: 100vh; display: flex; justify-content: center; align-items: center; background-color: linear-gradient(200deg, #cbdcf5, #fce7ef);">
                                         <div class="show" style="font: size 12px;">
                                             <p>您好，</p>
-                                            <p>这里是 C919 中传放心传，您的验证连接为：</p><br>
+                                            <p>这里是 C919 Pan，您的验证连接为：</p><br>
                                             <a style="font-size: 30px;" href="
                                             """ + randompage + """
                                             "><strong>=>点击进行验证<=</strong></a><br>
@@ -62,7 +58,7 @@ def mail_content_token():
                                     <body style="height: 100vh; display: flex; justify-content: center; align-items: center; background-color: linear-gradient(200deg, #cbdcf5, #fce7ef);">
                                         <div class="show" style="font: size 12px;">
                                             <p>您好，</p>
-                                            <p>这里是 C919 中传放心传，您的验证码为：</p><br>
+                                            <p>这里是 C919 Pan，您的验证码为：</p><br>
                                             <br><h3> """ + str(randomtoken) + """</h3><br>
                                             <p>验证码有效期为 5 分钟，仅可使用一次。</p>
                                             <p>您没有收到来自 C919 的验证要求，却收到了这封邮件？如果是这样，您的账号可能有安全隐患。请尽快更改您的密码。</p>
@@ -101,7 +97,7 @@ def testUpload():
         iv = binascii.unhexlify(iv)
         # file aes decrypt
         filecont = aes_decrypt(key, iv, c)  # c is bytes
-        filecont = binascii.unhexlify(filecont.decode())    # filecont is original bytes(non-encrypt)
+        filecont = binascii.unhexlify(filecont.decode())  # filecont is original bytes(non-encrypt)
         filename = request.files['file'].filename
         filename_plain = filename[::-1].split('.', 1)[1][::-1]
         fileExtension = filename.split('.')[-1]
@@ -109,14 +105,14 @@ def testUpload():
             return '文件名过长,超过45个字符'
         if fileExtension not in fileTypeWhiteList:
             return '不允许的文件类型'
-        result = upload.upload(session.get('h_email'), filecont, filename_plain)    # filecont is bytes
+        result = upload.upload(session.get('h_email'), filecont, filename_plain)  # filecont is bytes
         return result
     else:
         sql = C919SQL()
         sql.admin_link()
         uid = sql.selectUserUID(session.get('h_email'))[0]
         sql.end_link()
-        pubk = get_server_pubkey(uid)   # sent pubk
+        pubk = get_server_pubkey(uid)  # sent pubk
         # todo: sign
         # return render_template('testUpload.html', pubk=pubk)
         return '<h1> Congratulations! </h1><h1> You find an Easter egg! </h1><h1> Have a nice day! </h1>'
@@ -138,43 +134,52 @@ def index():
         if session.get('name'):
             db = C919SQL()
             db.search_link()
-            re = db.select_all_file(session.get('uid'))
+            re = db.select_all_file(session.get('uid'))  # 第四项 stamp 为了文件下载页面铺垫
             pubk = get_server_pubkey(session.get('uid'))  # sent pubk
             return render_template('index.html', userName=session.get('name'), filelist=re, pubk=pubk)
         else:
             return redirect(url_for('login'))
     if request.method == 'POST':
         db = C919SQL()
-        db.search_link()
-        userUUID = str(db.selectUserUID(session.get('h_email'))[0])
+        db.admin_link()
+        if not request.form['fun_select']:
+            return 'no'
+        if request.form['fun_select'] == 'file_delete':
+            del_stamp = request.form['delfilestamp']
+            upload.delete_file(del_stamp)
+            db.delete_file(del_stamp)
+            flash('删除成功')
+            return redirect(url_for('index'))
+        if request.form['fun_select'] == 'file_upload':
+            userUUID = str(db.selectUserUID(session.get('h_email'))[0])
+            # get file(aes encrypt), key(rsa encrypt), iv(rsa encrypt)
+            file = request.files['file']
+            key = request.files['e_key']
+            iv = request.files['e_iv']
+            k = base64.b64decode(key.read())
+            i = base64.b64decode(iv.read())
+            c = base64.b64decode(file.read())
+            # key, iv ras decrypt
+            key = server_decrypt(userUUID, k)
+            iv = server_decrypt(userUUID, i)
+            key = binascii.unhexlify(key)
+            iv = binascii.unhexlify(iv)
+            # file aes decrypt
+            filecont = aes_decrypt(key, iv, c)  # c is bytes
+            filecont = binascii.unhexlify(filecont.decode())  # filecont is original bytes(non-encrypt)
+            filename = request.files['file'].filename
+            filename_plain = filename[::-1].split('.', 1)[1][::-1]
+            fileExtension = filename.split('.')[-1]
+            if len(filename) > 45:
+                flash('文件名过长,超过45个字符')
+                return redirect(url_for('index'))
+            if fileExtension not in fileTypeWhiteList:
+                flash('不允许的文件类型')
+                return redirect(url_for('index'))
+            result = upload.upload(session.get('h_email'), filecont, filename_plain)  # filecont is bytes
+            flash('上传成功！')
+            return redirect(url_for('index'))
         db.end_link()
-        # get file(aes encrypt), key(rsa encrypt), iv(rsa encrypt)
-        file = request.files['file']
-        key = request.files['e_key']
-        iv = request.files['e_iv']
-        k = base64.b64decode(key.read())
-        i = base64.b64decode(iv.read())
-        c = base64.b64decode(file.read())
-        # key, iv ras decrypt
-        key = server_decrypt(userUUID, k)
-        iv = server_decrypt(userUUID, i)
-        key = binascii.unhexlify(key)
-        iv = binascii.unhexlify(iv)
-        # file aes decrypt
-        filecont = aes_decrypt(key, iv, c)  # c is bytes
-        filecont = binascii.unhexlify(filecont.decode())    # filecont is original bytes(non-encrypt)
-        filename = request.files['file'].filename
-        filename_plain = filename[::-1].split('.', 1)[1][::-1]
-        fileExtension = filename.split('.')[-1]
-        if len(filename) > 45:
-            flash('文件名过长,超过45个字符')
-            return redirect(url_for('index'))
-        if fileExtension not in fileTypeWhiteList:
-            flash('不允许的文件类型')
-            return redirect(url_for('index'))
-        result = upload.upload(session.get('h_email'), filecont, filename_plain)    # filecont is bytes
-        flash('上传成功！')
-        return redirect(url_for('index'))
 
 
 @pages.route('/login')
@@ -203,7 +208,7 @@ def forgot():
                 sql.end_link()
                 session['start_time'] = time.time()
                 message = mail_content_token()
-                sendMail(message, 'C919注册邮箱验证', 'C919指挥部', 'User', request.form['email'])
+                sendMail(message, 'C919邮箱验证', 'C919指挥部', 'User', request.form['email'])
                 session['start_time'] = time.time()
                 session['check_fun'] = 1
                 return redirect(url_for('email_check_code'))
@@ -348,7 +353,7 @@ def email_check_code():
             sql.userCreate(session.get('r_name'), session.get('h_email'), session.get('h_password'))
             uid = sql.selectUserUID(session.get('h_email'))[0]
             sql.end_link()
-            create_key(uid)    # 创建公私钥对
+            create_key(uid)  # 创建公私钥对
             flash('注册成功！')
             return redirect(url_for('login'))
         else:
@@ -357,6 +362,17 @@ def email_check_code():
             return redirect(url_for('set_password', user_email=session.get('email')))
     else:
         return render_template('email_check.html')
+
+
+@pages.route('/file/<stamp>')
+def file(stamp):
+    db = C919SQL()
+    db.search_link()
+    result = db.select_file_stamp(stamp)
+    if not result:
+        return redirect(url_for('404'))
+    db.end_link()
+    return 'file:' + str(result)
 
 
 @pages.route('/logout', methods=['GET', 'POST'])

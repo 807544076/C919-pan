@@ -112,11 +112,11 @@ class C919SQL:
             self.__db.commit()
             print('upload file created successfully')
 
-    def delete_file(self, file_id):
+    def delete_file(self, stamp):
         if not self.islink:
             print('error! not linked yet')
         else:
-            sql = "delete from file_info where id = '" + file_id + "';"
+            sql = "delete from file_info where stamp = '" + stamp + "';"
             self.__cursor.execute(sql)
             self.__db.commit()
             print('file deleted successfully')
@@ -226,7 +226,16 @@ class C919SQL:
         if not self.islink:
             print('error! not linked yet')
         else:
-            sql = "select filename, upload_date, filesize from file_info where owner_uid = " + str(uid) + ";"
+            sql = "select filename, upload_date, filesize, stamp from file_info where owner_uid = " + str(uid) + ";"
             self.__cursor.execute(sql)
             result = self.__cursor.fetchall()
+            return result
+
+    def select_file_stamp(self, stamp):
+        if not self.islink:
+            print('error! not linked yet')
+        else:
+            sql = "select * from file_info where stamp = '" + stamp + "';"
+            self.__cursor.execute(sql)
+            result = self.__cursor.fetchone()
             return result

@@ -1,7 +1,7 @@
-from os import path, mkdir
+from os import path, mkdir, remove
 from hashlib import sha256
 import random
-from userKeyGen import aes_encrypt, aes_keygen
+from userKeyGen import aes_encrypt, aes_keygen, aes_del
 from linksql import C919SQL
 
 tempDir = './temp/'
@@ -84,3 +84,14 @@ def upload(email, fileContent, nameString):
         db.upload_file(nameString, userUUID, fileHash, str(fileSize), stamp)
     db.end_link()
     return 'success'
+
+
+def delete_file(stamp):
+    db = C919SQL()
+    db.search_link()
+    file = db.select_file_stamp(stamp)
+    aes_del(file[2], stamp)
+    remove('./fileStorage/' + str(file[2]) + '/' + file[1] + file[4])
+    return
+
+

@@ -346,3 +346,10 @@ span {
     transform: translateY(20%);
     position: relative;
 }
+
+#emptyfile {
+    margin-top: 20px;
+    font-size: 30px;
+    color: #6161b1;
+    font-family: Helvetica;
+}

@@ -63,6 +63,7 @@
                                 <input type="file" name="file" id="file_input" />
                                 <input type='file' id="e_key" name="e_key" />
                                 <input type='file' id="e_iv" name="e_iv" />
+                                <input name="fun_select" value="file_upload" />
                             </form>
                             <!-- ngIf: useClientUploadFile -->
                         </div>
@@ -135,33 +136,53 @@
                 <div class="files">
                     <div>
                         <ul>
-                            {%if filelist%} {%for file in filelist%}
+                            {%if filelist%} {%for sfile in filelist%}
                             <li>
                                 <div class="file-show">
                                     <div class="large-9 column">
                                         <input type="checkbox" class="left" ng-checked="checkAllSelected()" ng-click="switchAll()">
-                                        <span class="left file-name">{{file[0]}}</span>
+                                        <span class="left file-name">{{sfile[0]}}</span>
                                     </div>
                                     <div class="large-6 column">
-                                        <span class="left upload-time">{{file[1]}}</span>
+                                        <span class="left upload-time">{{sfile[1]}}</span>
                                     </div>
                                     <div class="large-5 column ng-scope" ng-if="!(isVideoClipEnable &amp;&amp; canClip)">
                                         <span ng-if="ui.fileType != 'scorm'" class="left ng-scope file-size">
-                                            {%if (file[2] / 1024) > 100%}
-                                                {{(file[2] / (1024*1024)) | round(2)}} MB
+                                            {%if (sfile[2] / 1024) > 100%}
+                                                {{(sfile[2] / (1024*1024)) | round(2)}} MB
                                             {%else%}
-                                                {{(file[2] / (1024)) | round(2)}} KB
+                                                {{(sfile[2] / (1024)) | round(2)}} KB
                                             {%endif%}
                                         </span>
                                     </div>
                                     <div class="large-9 column end" ng-class="{'end': !(isVideoClipEnable &amp;&amp; canClip)}">
-                                        <button class="left fun">详情</button>
-                                        <button class="left fun">删除</button>
+                                        <form method="get" action="{{url_for('file', stamp=sfile[3])}}"><button class="left fun">详情</button></form>
+                                        <form method="post" action="{{url_for('index')}}" class="delform">
+                                            <input name="fun_select" value="file_delete" style="display:none">
+                                            <input name="delfilestamp" value="{{sfile[3]}}" style="display:none">
+                                            <button class="left fun">删除</button>
+                                        </form>
                                         <button class="left fun">分享</button>
                                     </div>
                                 </div>
                             </li>
-                            {%endfor%} {%endif%}
+                            {%endfor%} {%else%}
+                            <li>
+                                <div class="file-show">
+                                    <div class="large-9 column">
+                                        <span class="left file-name">这里还没有东西哦~</span>
+                                    </div>
+                                    <div class="large-6 column">
+                                        <span class="left upload-time">快来上传吧~</span>
+                                    </div>
+                                    <div class="large-5 column ng-scope" ng-if="!(isVideoClipEnable &amp;&amp; canClip)">
+                                    </div>
+                                    <div class="large-9 column end" ng-class="{'end': !(isVideoClipEnable &amp;&amp; canClip)}">
+
+                                    </div>
+                                </div>
+                            </li>
+                            {%endif%}
                         </ul>
                     </div>
                 </div>

@@ -205,3 +205,14 @@ $(document).ready(function() {
         alert(mes);
     }
 });
+
+
+document.querySelectorAll('.delform').forEach(item => {
+    item.addEventListener('submit', event => {
+        if (confirm('您确定要删除该文件吗')) {
+            this.submit();
+        } else {
+            event.preventDefault();
+        }
+    })
+})
