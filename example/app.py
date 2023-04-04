@@ -1,3 +1,5 @@
+import asyncio
+
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_session import Session
 from linksql import C919SQL
@@ -143,7 +145,7 @@ def index():
         db = C919SQL()
         db.admin_link()
         if not request.form['fun_select']:
-            return 'no'
+            return render_template('403.html')
         if request.form['fun_select'] == 'file_delete':
             del_stamp = request.form['delfilestamp']
             upload.delete_file(del_stamp)
@@ -176,7 +178,7 @@ def index():
             if fileExtension not in fileTypeWhiteList:
                 flash('不允许的文件类型')
                 return redirect(url_for('index'))
-            result = upload.upload(session.get('h_email'), filecont, filename_plain)  # filecont is bytes
+            result = upload.upload(session.get('h_email'), filecont, filename)  # filecont is bytes
             flash('上传成功！')
             return redirect(url_for('index'))
         db.end_link()
@@ -227,7 +229,6 @@ def set_password():
     if request.method == 'POST':
         bytes_password = bytes(request.form['password'], 'utf-8')
         passwd = HASHER(bytes_password, encoder=nacl.encoding.HexEncoder).decode('utf-8')
-        print(passwd)
         if request.form['password'] == '$2a$12$26adcdf68dfb176d4c876u6ocbRW0ZNqedwx5ZlKIxmPI/H/wwele':
             flash('请输入密码')
             return redirect(url_for('set_password', user_email=session.get('email')))
@@ -289,7 +290,6 @@ def testpage_login():
         return redirect(url_for('index', userName=session.get('name')))
     if request.method == 'POST':
         if request.form['get_csrf'] == digest.decode('utf-8'):
-            print(request.form['password'])
             bytes_email = bytes(request.form['email'], 'utf-8')
             bytes_password = bytes(request.form['password'], 'utf-8')
             h_email = HASHER(bytes_email, encoder=nacl.encoding.HexEncoder).decode('utf-8')
@@ -372,7 +372,7 @@ def file(stamp):
     if not result:
         return redirect(url_for('404'))
     db.end_link()
-    return 'file:' + str(result)
+    return render_template('fileinfo.html', file=result, owner=session.get('name'))
 
 
 @pages.route('/logout', methods=['GET', 'POST'])

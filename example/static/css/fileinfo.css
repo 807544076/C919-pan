@@ -1,0 +1,106 @@
+body {
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(200deg, #cbdcf5, #fce7ef);
+}
+
+.container {
+    background-color: #ffffff;
+    width: 800px;
+    height: 350px;
+    border-radius: 8px;
+    box-shadow: 5px 5px 5px rgba(0, 0, 0, 0, 1);
+    position: relative;
+    padding-top: 5px;
+    padding-right: 3px;
+    padding-bottom: 5px;
+    padding-left: 8px;
+    border: #f6f6f6 1px solid;
+}
+
+.file-info {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
+}
+
+.file-part {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100%;
+}
+
+.fun-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 20%;
+    margin-top: 12px;
+}
+
+.user-info {
+    height: 100%;
+    width: 30%;
+    border-right: #6262ad 2px dashed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#protray {
+    margin-top: 50px;
+    margin-bottom: 20px;
+    height: 100px;
+    width: 100px;
+    border: #6262ad 3px solid;
+}
+
+.button-span {
+    margin: 12px 12px;
+    padding: 18px;
+}
+
+.info-list {
+    margin: 12px 24px;
+    font-size: 14px;
+    line-height: 50px;
+    list-style: circle;
+}
+
+p {
+    font-size: 16px;
+    letter-spacing: 2px;
+    line-height: 10px;
+}
+
+button {
+    margin: 12px, 24px;
+    background-color: #f6f6f6;
+    outline: none;
+    border-radius: 8px;
+    padding: 13px 32px;
+    color: #6262ad;
+    letter-spacing: 2px;
+    border: none;
+    cursor: pointer;
+    -moz-appearance: none;
+    display: inline-block;
+    font-family: Helvetica, Hiragino Sans GB, WenQuanYi Micro Hei, Microsoft YaHei, sans-serif, Noto Sans CJK SC, Code2001, Code2002;
+    font-weight: 400;
+    position: relative;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color .3s ease-out;
+}
+
+button:hover {
+    background-color: #6262ad;
+    color: #f6f6f6;
+    transition: background-color 0.5s ease;
+}

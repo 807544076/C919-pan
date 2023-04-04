@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Information</title>
+    <link rel="stylesheet" href="/static/css/fileinfo.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="file-info">
+            <div class="user-info">
+                <div id="protray"><img src="/static/img/2.jpg" style="height:100px; width:100px;"></div>
+                <p>{{owner}}</p>
+                <div>
+                    <p style="font-size:8px;letter-spacing:0px;">文件最后更新：{{file[3]}}</p>
+                </div>
+                {%if file[6] == 0%}
+                <div style="display: flex;flex-direction: row;justify-content: center;align-items: center;border: gray 2px dashed; width:80%; margin-top: 18px;">
+                    <p style="font-size:28px; font-weight:bold; color:rgb(162, 162, 162); letter-spacing:10px; ">未分享</p>
+                </div>
+
+                {%else%}
+                <div style="display: flex;flex-direction: row;justify-content: center;align-items: center;border:#6262ad 2px dashed; width:80%;margin-top: 18px;">
+                    <p style="font-size:28px; font-weight:bold; color:#6262ad; letter-spacing:10px;">已分享</p>
+                </div>
+                {%endif%}
+            </div>
+            <div class="file-part">
+                <div class="fun-bar">
+                    <span class="button-span"><button>下载文件</button></span>
+                    <!-- <span class="button-span"><button>更新日期</button></span> -->
+                    <span class="button-span"><button onclick="history.back()">返回主页</button></span>
+                </div>
+                <div>
+                    <strong><p style="margin-left: 45px;">文件信息:</p></strong>
+                    <ul class="info-list">
+                        <li>文件名：{{file[1]}}</li>
+                        <li id="sha">SHA256: <button style="padding: 8px;" onclick="document.getElementById('sha').innerHTML='{{file[4]}}'">点击显示</button></li>
+                        <li>过期时间：{{file[5]}}</li>
+                        {%if (file[7] / 1024) > 100%}
+                        <li>文件大小：{{(file[7] / (1024 * 1024)) | round(2)}} MB</li>
+                        {%else%}
+                        <li>文件大小：{{(file[7] / 1024) | round(2)}} KB</li>
+                        {%endif%}
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</body>
+
+</html>

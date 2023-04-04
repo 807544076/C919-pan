@@ -1,3 +1,4 @@
+from shutil import rmtree
 from os import path, mkdir, urandom
 import rsa
 from Cryptodome.Cipher import AES
@@ -61,7 +62,7 @@ def get_server_pubkey(uid):
 
 
 def server_decrypt(uid, fileContent):
-    f = open('./userKey/' + uid + '/server/private_key.key', 'rb')
+    f = open(keyPath + uid + '/server/private_key.key', 'rb')
     prik = f.read()
     f.close()
     privatekey = rsa.PrivateKey.load_pkcs1(prik)
@@ -74,7 +75,7 @@ def server_decrypt(uid, fileContent):
 
 
 def server_encrypt(uid, fileContent):
-    f = open('./userKey/' + uid + '/server/public_key.key', 'rb')
+    f = open(keyPath + uid + '/server/public_key.key', 'rb')
     pubk = f.read()
     f.close()
     publickey = rsa.PublicKey.load_pkcs1(pubk)
@@ -87,7 +88,7 @@ def server_encrypt(uid, fileContent):
 
 
 def user_decrypt(uid, fileContent):
-    f = open('./userKey/' + uid + '/user/private_key.key', 'rb')
+    f = open(keyPath + uid + '/user/private_key.key', 'rb')
     prik = f.read()
     f.close()
     privatekey = rsa.PrivateKey.load_pkcs1(prik)
@@ -100,7 +101,7 @@ def user_decrypt(uid, fileContent):
 
 
 def user_encrypt(uid, fileContent):
-    f = open('./userKey/' + uid + '/user/public_key.key', 'rb')
+    f = open(keyPath + uid + '/user/public_key.key', 'rb')
     pubk = f.read()
     f.close()
     publickey = rsa.PublicKey.load_pkcs1(pubk)
@@ -147,6 +148,12 @@ def aes_decrypt(key, iv, message):
     except Exception as e:
         print("Error:" + str(e))
         return False
+
+
+def aes_del(uid, stamp):
+    print(uid, stamp)
+    rmtree(keyPath + str(uid) + '/file_aes/' + stamp)
+    return
 
 
 # print(aes_keygen()[0])
