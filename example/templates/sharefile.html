@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Information</title>
+    <link rel="stylesheet" href="/static/css/fileinfo.css">
+</head>
+
+<body>
+    <div class="container">
+        <div class="file-info">
+            <div class="user-info">
+                <div id="protray"><img src="/static/img/2.jpg" style="height:100px; width:100px;"></div>
+                <p>{{owner}}</p>
+                <div>
+                    <p style="font-size:8px;letter-spacing:0px;">文件最后更新：{{file[3]}}</p>
+                </div>
+            </div>
+            <div class="file-part">
+                <div class="fun-bar">
+                    <span class="button-span">
+                        <form action="{{url_for('download', stamp=file[8])}}" method="POST" id="download">
+                            <input name="code", value="" style="display: none;" id="code">
+                            <button>下载加密文件</button>
+                        </form>
+                    </span> {%if session.name%}
+                    <span class="button-span"><button onclick="auth()">输入授权码</button></span> {%endif%}
+                    <span class="button-span"><form method="get" action="{{url_for('index')}}"><button>返回主页</button></span>
+                </div>
+                <div>
+                    <strong><p style="margin-left: 45px;">文件信息:</p></strong>
+                    <ul class="info-list">
+                        <li>文件名：{{file[1]}}</li>
+                        <li id="sha">SHA256: <button style="padding: 8px;" onclick="document.getElementById('sha').innerHTML='{{file[4]}}'">点击显示</button></li>
+                        <li>过期时间：{{file[5]}}</li>
+                        {%if (file[7] / 1024) > 100%}
+                        <li>文件大小：{{(file[7] / (1024 * 1024)) | round(2)}} MB</li>
+                        {%else%}
+                        <li>文件大小：{{(file[7] / 1024) | round(2)}} KB</li>
+                        {%endif%}
+                    </ul>
+                </div>
+            </div>
+        </div>
+</body>
+<script>
+    function auth() {
+        var code = window.prompt('请输入授权码', '');
+        document.getElementById('code').value = code;
+        // alert(code);
+        if (code != null) {
+            document.getElementById('download').submit();
+        }
+    }
+</script>
+
+</html>

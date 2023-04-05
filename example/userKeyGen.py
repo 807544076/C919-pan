@@ -62,7 +62,7 @@ def get_server_pubkey(uid):
 
 
 def server_decrypt(uid, fileContent):
-    f = open(keyPath + uid + '/server/private_key.key', 'rb')
+    f = open(keyPath + str(uid) + '/server/private_key.key', 'rb')
     prik = f.read()
     f.close()
     privatekey = rsa.PrivateKey.load_pkcs1(prik)
@@ -75,7 +75,7 @@ def server_decrypt(uid, fileContent):
 
 
 def server_encrypt(uid, fileContent):
-    f = open(keyPath + uid + '/server/public_key.key', 'rb')
+    f = open(keyPath + str(uid) + '/server/public_key.key', 'rb')
     pubk = f.read()
     f.close()
     publickey = rsa.PublicKey.load_pkcs1(pubk)
@@ -88,7 +88,7 @@ def server_encrypt(uid, fileContent):
 
 
 def user_decrypt(uid, fileContent):
-    f = open(keyPath + uid + '/user/private_key.key', 'rb')
+    f = open(keyPath + str(uid) + '/user/private_key.key', 'rb')
     prik = f.read()
     f.close()
     privatekey = rsa.PrivateKey.load_pkcs1(prik)
@@ -101,7 +101,7 @@ def user_decrypt(uid, fileContent):
 
 
 def user_encrypt(uid, fileContent):
-    f = open(keyPath + uid + '/user/public_key.key', 'rb')
+    f = open(keyPath + str(uid) + '/user/public_key.key', 'rb')
     pubk = f.read()
     f.close()
     publickey = rsa.PublicKey.load_pkcs1(pubk)
@@ -145,6 +145,16 @@ def aes_decrypt(key, iv, message):
         decipher = AES.new(key, AES.MODE_OFB, iv)
         re = decipher.decrypt(message)
         return unpad(re, 16)
+    except Exception as e:
+        print("Error:" + str(e))
+        return False
+
+
+def aes_decrypt_download(key, iv, message):
+    try:
+        decipher = AES.new(key, AES.MODE_OFB, iv)
+        re = decipher.decrypt(message)
+        return re
     except Exception as e:
         print("Error:" + str(e))
         return False

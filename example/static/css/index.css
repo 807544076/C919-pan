@@ -324,6 +324,13 @@ span {
     word-break: normal;
 }
 
+.file-name {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 200px;
+    overflow: hidden;
+}
+
 .resource {
     border-bottom: 1px solid #dfdfdf;
     padding: 15px 0;

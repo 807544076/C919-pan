@@ -138,10 +138,10 @@
                         <ul>
                             {%if filelist%} {%for sfile in filelist%}
                             <li>
-                                <div class="file-show">
-                                    <div class="large-9 column">
+                                <div class="file-show" style="display: flex;">
+                                    <div class="large-9 column" style="min-width: 0;">
                                         <input type="checkbox" class="left" ng-checked="checkAllSelected()" ng-click="switchAll()">
-                                        <span class="left file-name">{{sfile[0]}}</span>
+                                        <span class="left file-name" title="{{sfile[0]}}">{{sfile[0]}}</span>
                                     </div>
                                     <div class="large-6 column">
                                         <span class="left upload-time">{{sfile[1]}}</span>
@@ -162,7 +162,14 @@
                                             <input name="delfilestamp" value="{{sfile[3]}}" style="display:none">
                                             <button class="left fun">删除</button>
                                         </form>
-                                        <button class="left fun">分享</button>
+                                        {%if sfile[4] == 0%}
+                                        <form method="post" action="{{url_for('index')}}" class="shareform">
+                                            <input name="fun_select" value="file_share" style="display:none">
+                                            <input name="sharefilestamp" value="{{sfile[3]}}" style="display:none">
+                                            <button class="left fun">分享</button>
+                                        </form>
+                                        {%else%}
+                                        <button class="left fun" id="shared" onmousemove="document.getElementById('shared').innerHTML='生成链接'" onmouseleave="document.getElementById('shared').innerHTML='已分享'" onclick="alert('https:\/\/127.0.0.1/sharefile/' + '{{sfile[3]}}')">已分享</button>                                        {%endif%}
                                     </div>
                                 </div>
                             </li>

@@ -31,9 +31,29 @@
             </div>
             <div class="file-part">
                 <div class="fun-bar">
-                    <span class="button-span"><button>下载文件</button></span>
-                    <!-- <span class="button-span"><button>更新日期</button></span> -->
-                    <span class="button-span"><button onclick="history.back()">返回主页</button></span>
+                    <span class="button-span">
+                        <form action="{{url_for('download', stamp=file[8])}}" method="POST">
+                            <input name="code", value="", style="display: none;">
+                            <button>下载文件</button>
+                        </form>
+                    </span> {%if file[6] == 1%}
+                    <span class="button-span">
+                        <form method="post" action="{{url_for('file', stamp=file[8])}}" class="disshare">
+                            <input name="select_fun" value="disshare" style="display: none;">
+                            <button>取消分享</button>
+                        </form>
+                    </span>
+                    <span class="button-span">
+                        <form method="post" action="{{url_for('file', stamp=file[8])}}" class="showcode">
+                            <input name="select_fun" value="showcode" style="display: none;">
+                            <button>查看授权码</button>
+                        </form>
+                    </span> {%endif%}
+                    <span class="button-span">
+                        <form method="get" action="{{url_for('index')}}">
+                            <button>返回主页</button>
+                        </form>
+                    </span>
                 </div>
                 <div>
                     <strong><p style="margin-left: 45px;">文件信息:</p></strong>
@@ -53,5 +73,26 @@
         </div>
     </div>
 </body>
+<script>
+    document.querySelectorAll('.disshare').forEach(item => {
+        item.addEventListener('submit', event => {
+            if (confirm('您确定要取消分享该文件吗')) {
+                this.submit();
+            } else {
+                event.preventDefault();
+            }
+        })
+    })
+
+    document.querySelectorAll('.showcode').forEach(item => {
+        item.addEventListener('submit', event => {
+            if (confirm('点击确定后，我们会将该文件的授权码发送至您的邮箱')) {
+                this.submit();
+            } else {
+                event.preventDefault();
+            }
+        })
+    })
+</script>
 
 </html>

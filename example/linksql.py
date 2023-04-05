@@ -130,14 +130,14 @@ class C919SQL:
             result = self.__cursor.fetchone()
             return result
 
-    def set_shared(self, file_id, status):
+    def set_shared(self, stamp, status):
         if not self.islink:
             print('error! not linked yet')
         else:
             if status:
-                sql = "update file_info set isshared = true where id = " + file_id + ";"
+                sql = "update file_info set isshared = true where stamp = '" + stamp + "';"
             else:
-                sql = "update file_info set isshared = false where id = " + file_id + ";"
+                sql = "update file_info set isshared = false where stamp = '" + stamp + "';"
             self.__cursor.execute(sql)
             self.__db.commit()
             print('sharing changed successfully')
@@ -207,7 +207,6 @@ class C919SQL:
             print('error! not linked yet')
         else:
             sql = "update user_info set password = '" + password + "' where email ='" + email + "';"
-            print(sql)
             self.__cursor.execute(sql)
             self.__db.commit()
             print('password changed successfully')
@@ -226,7 +225,7 @@ class C919SQL:
         if not self.islink:
             print('error! not linked yet')
         else:
-            sql = "select filename, upload_date, filesize, stamp from file_info where owner_uid = " + str(uid) + ";"
+            sql = "select filename, upload_date, filesize, stamp, isshared from file_info where owner_uid = " + str(uid) + ";"
             self.__cursor.execute(sql)
             result = self.__cursor.fetchall()
             return result
@@ -236,6 +235,33 @@ class C919SQL:
             print('error! not linked yet')
         else:
             sql = "select * from file_info where stamp = '" + stamp + "';"
+            self.__cursor.execute(sql)
+            result = self.__cursor.fetchone()
+            return result
+
+    def select_username_by_uid(self, uid):
+        if not self.islink:
+            print('error! not linked yet')
+        else:
+            sql = "select name from user_info where uid = " + str(uid) + ";"
+            self.__cursor.execute(sql)
+            result = self.__cursor.fetchone()
+            return result
+
+    def set_authorization_code(self, stamp, code):
+        if not self.islink:
+            print('error! not linked yet')
+        else:
+            sql = "update file_info set authorization_code = '" + code + "' where stamp ='" + stamp + "';"
+            self.__cursor.execute(sql)
+            self.__db.commit()
+            return True
+
+    def select_file_owner(self, stamp):
+        if not self.islink:
+            print('error! not linked yet')
+        else:
+            sql = "select owner_id from file_info where stamp = '" + stamp + "';"
             self.__cursor.execute(sql)
             result = self.__cursor.fetchone()
             return result

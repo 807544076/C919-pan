@@ -1,6 +1,4 @@
-import asyncio
-
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, send_file
 from flask_session import Session
 from linksql import C919SQL
 import nacl.encoding
@@ -9,8 +7,9 @@ import time
 import random
 from send_mail import sendMail
 from datetime import timedelta
+from os import remove
 import upload
-from userKeyGen import create_key, get_user_pubkey, get_server_pubkey, server_decrypt, aes_decrypt
+from userKeyGen import create_key, get_server_pubkey, server_decrypt, aes_decrypt, user_decrypt, aes_decrypt_download, user_encrypt
 import base64
 import binascii
 
@@ -36,20 +35,20 @@ def mail_content_link():
                    encoder=nacl.encoding.HexEncoder).decode('utf-8')
     randompage = 'https://c919pan.xyz/email_check/' + str(token)
     message = """
-                                    <body style="height: 100vh; display: flex; justify-content: center; align-items: center; background-color: linear-gradient(200deg, #cbdcf5, #fce7ef);">
-                                        <div class="show" style="font: size 12px;">
-                                            <p>您好，</p>
-                                            <p>这里是 C919 Pan，您的验证连接为：</p><br>
-                                            <a style="font-size: 30px;" href="
-                                            """ + randompage + """
-                                            "><strong>=>点击进行验证<=</strong></a><br>
-                                            <p>本连接有效期为 5 分钟，仅可使用一次。</p>
-                                            <p>您没有收到来自 C919 的验证要求，却收到了这封邮件？如果是这样，您的账号可能有安全隐患。请尽快更改您的密码。</p>
-                                            <p>诚挚祝福，</p>
-                                            <p>来自 C919 指挥部</p>
-                                        </div>
-                                    </body>
-                """
+        <body style="height: 100vh; display: flex; justify-content: center; align-items: center; background-color: linear-gradient(200deg, #cbdcf5, #fce7ef);">
+            <div class="show" style="font: size 12px;">
+                <p>您好，</p>
+                <p>这里是 C919 Pan，您的验证连接为：</p><br>
+                <a style="font-size: 30px;" href="
+                """ + randompage + """
+                "><strong>=>点击进行验证<=</strong></a><br>
+                <p>本连接有效期为 5 分钟，仅可使用一次。</p>
+                <p>您没有收到来自 C919 的验证要求，却收到了这封邮件？如果是这样，您的账号可能有安全隐患。请尽快更改您的密码。</p>
+                <p>诚挚祝福，</p>
+                <p>来自 C919 指挥部</p>
+            </div>
+        </body>
+    """
     return message
 
 
@@ -57,18 +56,34 @@ def mail_content_token():
     randomtoken = random.randint(100000, 999999)
     session['randomtoken'] = randomtoken
     message = """
-                                    <body style="height: 100vh; display: flex; justify-content: center; align-items: center; background-color: linear-gradient(200deg, #cbdcf5, #fce7ef);">
-                                        <div class="show" style="font: size 12px;">
-                                            <p>您好，</p>
-                                            <p>这里是 C919 Pan，您的验证码为：</p><br>
-                                            <br><h3> """ + str(randomtoken) + """</h3><br>
-                                            <p>验证码有效期为 5 分钟，仅可使用一次。</p>
-                                            <p>您没有收到来自 C919 的验证要求，却收到了这封邮件？如果是这样，您的账号可能有安全隐患。请尽快更改您的密码。</p>
-                                            <p>诚挚祝福，</p>
-                                            <p>来自 C919 指挥部</p>
-                                        </div>
-                                    </body>
-                """
+        <body style="height: 100vh; display: flex; justify-content: center; align-items: center; background-color: linear-gradient(200deg, #cbdcf5, #fce7ef);">
+            <div class="show" style="font: size 12px;">
+                <p>您好，</p>
+                <p>这里是 C919 Pan，您的验证码为：</p>
+                <br><h3> """ + str(randomtoken) + """</h3><br>
+                <p>验证码有效期为 5 分钟，仅可使用一次。</p>
+                <p>您没有收到来自 C919 的验证要求，却收到了这封邮件？如果是这样，您的账号可能有安全隐患。请尽快更改您的密码。</p>
+                <p>诚挚祝福，</p>
+                <p>来自 C919 指挥部</p>
+            </div>
+        </body>
+    """
+    return message
+
+
+def mail_authorization_code(filename, code):
+    message = """
+        <body style="height: 100vh; display: flex; justify-content: center; align-items: center; background-color: linear-gradient(200deg, #cbdcf5, #fce7ef);">
+            <div class="show" style="font: size 12px;">
+                <p>您好，</p>
+                <p>这里是 C919 Pan，您的文件""" + filename + """的授权码为：</p>
+                <br><h3> """ + str(code) + """</h3><br>
+                <p>该授权码在您取消分享或分享过期之前均有效，快去分享您的文件吧。</p>
+                <p>诚挚祝福，</p>
+                <p>来自 C919 指挥部</p>
+            </div>
+        </body>
+    """
     return message
 
 
@@ -151,6 +166,17 @@ def index():
             upload.delete_file(del_stamp)
             db.delete_file(del_stamp)
             flash('删除成功')
+            return redirect(url_for('index'))
+        if request.form['fun_select'] == 'file_share':
+            share_stamp = request.form['sharefilestamp']
+            code = random.randint(100000, 999999)
+            hcode = HASHER(bytes(str(code), 'utf-8'), encoder=nacl.encoding.HexEncoder).decode('utf-8')
+            f = open('./userKey/' + str(session.get('uid')) + '/file_aes/' + share_stamp + '/code.key', 'wb')
+            f.write(user_encrypt(session.get('uid'), str(code).encode('utf-8')))
+            f.close()
+            db.set_shared(share_stamp, True)
+            db.set_authorization_code(share_stamp, hcode)
+            flash('您的授权码为：' + str(code))
             return redirect(url_for('index'))
         if request.form['fun_select'] == 'file_upload':
             userUUID = str(db.selectUserUID(session.get('h_email'))[0])
@@ -364,15 +390,93 @@ def email_check_code():
         return render_template('email_check.html')
 
 
-@pages.route('/file/<stamp>')
+@pages.route('/file/<stamp>', methods=['POST', 'GET'])
 def file(stamp):
+    if request.method == 'GET':
+        db = C919SQL()
+        db.search_link()
+        result = db.select_file_stamp(stamp)
+        owner = db.select_username_by_uid(result[2])[0]
+        if not result:
+            return render_template('404.html')
+        if result[2] != session.get('uid'):
+            return render_template('403.html')
+        db.end_link()
+        return render_template('fileinfo.html', file=result, owner=owner)
+    else:
+        if request.form['select_fun'] == 'disshare':
+            db = C919SQL()
+            db.admin_link()
+            remove('./userKey/' + str(session.get('uid')) + '/file_aes/' + stamp + '/code.key')
+            db.set_shared(stamp, False)
+            db.end_link()
+            return redirect(url_for('file', stamp=stamp))
+        if request.form['select_fun'] == 'showcode':
+            db = C919SQL()
+            db.search_link()
+            result = db.select_file_stamp(stamp)
+            f = open('./userKey/' + str(session.get('uid')) + '/file_aes/' + stamp + '/code.key', 'rb')
+            code = user_decrypt(str(session.get('uid')), f.read()).decode()
+            f.close()
+            mes = mail_authorization_code(result[1], code)
+            sendMail(mes, 'C919授权码', 'C919指挥部', 'User', session.get('email'))
+            return redirect(url_for('file', stamp=stamp))
+        else:
+            return render_template('403.html')
+
+
+@pages.route('/sharefile/<stamp>')
+def sharefile(stamp):
+    db = C919SQL()
+    db.search_link()
+    result = db.select_file_stamp(stamp)
+    owner = db.select_username_by_uid(result[2])[0]
+    if not result:
+        return render_template('404.html')
+    if not result[6]:
+        return render_template('403.html')
+    if session.get('uid') == result[2]:
+        return redirect(url_for('file', stamp=stamp))
+    db.end_link()
+    return render_template('sharefile.html', file=result, owner=owner)
+
+
+@pages.route('/download/<stamp>', methods=['POST'])
+def download(stamp):
+    flag = False
     db = C919SQL()
     db.search_link()
     result = db.select_file_stamp(stamp)
     if not result:
         return redirect(url_for('404'))
+    aes_path = './userKey/' + str(result[2]) + '/file_aes/' + stamp + '/'
+    file_path = './fileStorage/' + str(result[2]) + '/' + result[1] + result[4]
+    code = request.form['code']
+    hcode = HASHER(bytes(str(code), 'utf-8'), encoder=nacl.encoding.HexEncoder).decode('utf-8')
+    if result[6] == 1 and hcode == result[9]:    # 已分享且授权码正确
+        flag = True
+    elif session.get('uid') == result[2]:
+        flag = True
     db.end_link()
-    return render_template('fileinfo.html', file=result, owner=session.get('name'))
+    if flag:
+        f = open(aes_path + 'key.key', 'rb')
+        e_k = f.read()
+        f.close()
+        key = user_decrypt(result[2], e_k)
+        f = open(aes_path + 'iv.key', 'rb')
+        e_i = f.read()
+        f.close()
+        iv = user_decrypt(result[2], e_i)
+        f = open(file_path, 'rb')
+        e_filecont = f.read()
+        f.close()
+        filecont = aes_decrypt_download(key, iv, e_filecont)
+        f = open('./temp/' + result[1], 'wb')
+        f.write(filecont)
+        f.close()
+        return send_file('./temp/' + result[1], as_attachment=True)
+    else:
+        return send_file(file_path)
 
 
 @pages.route('/logout', methods=['GET', 'POST'])

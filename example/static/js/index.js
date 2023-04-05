@@ -216,3 +216,13 @@ document.querySelectorAll('.delform').forEach(item => {
         }
     })
 })
+
+document.querySelectorAll('.shareform').forEach(item => {
+    item.addEventListener('submit', event => {
+        if (confirm('您确定要分享该文件吗')) {
+            this.submit();
+        } else {
+            event.preventDefault();
+        }
+    })
+})
