@@ -87,6 +87,26 @@ function bufferToHex(buffer) {
     return hex;
 }
 
+function hexStringToByteArray(hexString) {
+    if (hexString.length % 2 !== 0) {
+        throw "Must have an even number of hex digits to convert to bytes";
+    }
+    var numBytes = hexString.length / 2;
+    var byteArray = new Uint8Array(numBytes);
+    for (var i = 0; i < numBytes; i++) {
+        byteArray[i] = parseInt(hexString.substr(i * 2, 2), 16);
+    }
+    return byteArray;
+}
+
+function fromHex(h) {
+    var s = ''
+    for (var i = 0; i < h.length; i += 2) {
+        s += String.fromCharCode(parseInt(h.substr(i, 2), 16))
+    }
+    return s
+}
+
 var secret_key = GenPBKDF2('hello aes', 256);
 var iv = CryptoJS.lib.WordArray.random(128 / 8);
 var dt_f = new DataTransfer();
@@ -96,6 +116,21 @@ var temp;
 var fileList;
 var encrypt = new JSEncrypt();
 encrypt.setPublicKey(document.getElementById('pubk').innerHTML);
+
+var sign = $('#sign').text(); //sign is sign encode with base64(string)
+var rb = $('#rb').text(); //rb is plain text
+var d_sign = encrypt.verify(rb, sign, CryptoJS.SHA256);
+if (!d_sign) {
+    alert('您当前所处网络环境不安全！您的功能将被暂时冻结，请切换至安全的网络环境后重新登录。');
+    var buttons = document.querySelectorAll('button');
+    buttons.forEach(button => {
+        button.disabled = true;
+    })
+    var ha = document.querySelectorAll('a');
+    ha.forEach(a => {
+        a.setAttribute('style', 'pointer-events:none;');
+    })
+}
 
 var area = document.querySelector('.drop-area');
 area.addEventListener("dragenter", function(e) { //拖进
@@ -121,7 +156,7 @@ area.addEventListener('drop', function(event) {
 
         var fr_e = new FileReader();
         fr_e.onloadend = function(e) {
-            var aes_result = aes_encrypt(bufferToHex(e.target.result), secret_key, iv);
+            var aes_result = aes_encrypt(bufferToHex(e.target.result), secret_key, iv); //input is string
             var encrypted_key = encrypt.encrypt(secret_key.toString());
             var encrypted_iv = encrypt.encrypt(iv.toString());
             let key_blob = new File([encrypted_key], "key", {

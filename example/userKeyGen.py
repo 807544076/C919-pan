@@ -166,6 +166,15 @@ def aes_del(uid, stamp):
     return
 
 
+def rsa_sign(uid, mes):
+    f = open(keyPath + str(uid) + '/server/private_key.key', 'rb')
+    prik = f.read()
+    f.close()
+    prik = rsa.PrivateKey.load_pkcs1(prik)
+    sign = rsa.sign(mes, prik, 'SHA-256')
+    return sign
+
+
 # print(aes_keygen()[0])
 # key, iv = aes_keygen()
 # print(key, iv)

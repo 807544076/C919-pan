@@ -7,9 +7,9 @@ import time
 import random
 from send_mail import sendMail
 from datetime import timedelta
-from os import remove
+from os import remove, urandom
 import upload
-from userKeyGen import create_key, get_server_pubkey, server_decrypt, aes_decrypt, user_decrypt, aes_decrypt_download, user_encrypt
+from userKeyGen import create_key, get_server_pubkey, server_decrypt, aes_decrypt, user_decrypt, aes_decrypt_download, user_encrypt, rsa_sign
 import base64
 import binascii
 
@@ -146,6 +146,12 @@ def to_index():
 @pages.route('/index', methods=['GET', 'POST'])
 def index():
     if request.method == 'GET':
+        if not session.get('name'):
+            return redirect(url_for('login'))
+        rb = upload.genstamp()
+        session['randombytes'] = rb
+        sign = rsa_sign(session.get('uid'), rb.encode())
+        session['sign'] = base64.b64encode(sign).decode()
         session['check_fun'] = 0  # 0 代表注册检测，1 代表忘记密码检测
         session['forgot_flag'] = 0  # 转跳标记位
         if session.get('name'):
@@ -477,6 +483,16 @@ def download(stamp):
         return send_file('./temp/' + result[1], as_attachment=True)
     else:
         return send_file(file_path)
+
+
+@pages.route('/user/<uid>')
+def user(uid):
+    return 'In test, ' + uid
+
+
+@pages.route('/temp/<anything>')
+def temp(flag):
+    return flag
 
 
 @pages.route('/logout', methods=['GET', 'POST'])

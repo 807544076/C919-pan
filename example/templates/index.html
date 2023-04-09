@@ -33,6 +33,10 @@
                     </div>
                 </div>
                 <div class="nav_list">
+                    <a href="/user/{{session.uid}}" class="nav_link">
+                        <ion-icon name="person-outline" class="nav_icon"></ion-icon>
+                        <span class="nav_name">用户设置</span>
+                    </a>
                     <a href="/forgot" class="nav_link">
                         <ion-icon name="settings-outline" class="nav_icon"></ion-icon>
                         <span class="nav_name">修改密码</span>
@@ -200,6 +204,8 @@
     <p hidden id="flash_mes">{{ message }}</p>
     {% endif %} {% endfor %}
 </body>
+<p hidden id="sign">{{ session.sign }}</p>
+<p hidden id="rb">{{ session.randombytes }}</p>
 <!--图案库-->
 <script src="https://unpkg.com/ionicons@5.1.2/dist/ionicons.js"></script>
 <script src="static/js/jquery-3.2.1.slim.min.js"></script>
@@ -208,6 +214,6 @@
 <!-- <script src="static/js/script.js"></script> -->
 <script src="/static/js/crypto-js.js"></script>
 <script src="/static/js/jsencrypt.min.js"></script>
-<script src="static/js/index.js"></script>
+<script src="/static/js/index.js"></script>
 
 </html>

@@ -338,7 +338,9 @@ span {
 }
 
 #welcome {
-    margin: 50px;
+    margin: 50px 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .file-show {
