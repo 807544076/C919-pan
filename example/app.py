@@ -96,42 +96,42 @@ def waitfor():
 def testUpload():
     if request.method == 'POST':
         return 'Let\'s back to Index'
-        db = C919SQL()
-        db.search_link()
-        userUUID = str(db.selectUserUID(session.get('h_email'))[0])
-        db.end_link()
-        # get file(aes encrypt), key(rsa encrypt), iv(rsa encrypt)
-        file = request.files['file']
-        key = request.files['e_key']
-        iv = request.files['e_iv']
-        k = base64.b64decode(key.read())
-        i = base64.b64decode(iv.read())
-        c = base64.b64decode(file.read())
-        # key, iv ras decrypt
-        key = server_decrypt(userUUID, k)
-        iv = server_decrypt(userUUID, i)
-        key = binascii.unhexlify(key)
-        iv = binascii.unhexlify(iv)
-        # file aes decrypt
-        filecont = aes_decrypt(key, iv, c)  # c is bytes
-        filecont = binascii.unhexlify(filecont.decode())  # filecont is original bytes(non-encrypt)
-        filename = request.files['file'].filename
-        filename_plain = filename[::-1].split('.', 1)[1][::-1]
-        fileExtension = filename.split('.')[-1]
-        if len(filename) > 45:
-            return '文件名过长,超过45个字符'
-        if fileExtension not in fileTypeWhiteList:
-            return '不允许的文件类型'
-        result = upload.upload(session.get('h_email'), filecont, filename_plain)  # filecont is bytes
-        return result
+        # db = C919SQL()
+        # db.search_link()
+        # userUUID = str(db.selectUserUID(session.get('h_email'))[0])
+        # db.end_link()
+        # # get file(aes encrypt), key(rsa encrypt), iv(rsa encrypt)
+        # file = request.files['file']
+        # key = request.files['e_key']
+        # iv = request.files['e_iv']
+        # k = base64.b64decode(key.read())
+        # i = base64.b64decode(iv.read())
+        # c = base64.b64decode(file.read())
+        # # key, iv ras decrypt
+        # key = server_decrypt(userUUID, k)
+        # iv = server_decrypt(userUUID, i)
+        # key = binascii.unhexlify(key)
+        # iv = binascii.unhexlify(iv)
+        # # file aes decrypt
+        # filecont = aes_decrypt(key, iv, c)  # c is bytes
+        # filecont = binascii.unhexlify(filecont.decode())  # filecont is original bytes(non-encrypt)
+        # filename = request.files['file'].filename
+        # filename_plain = filename[::-1].split('.', 1)[1][::-1]
+        # fileExtension = filename.split('.')[-1]
+        # if len(filename) > 45:
+        #     return '文件名过长,超过45个字符'
+        # if fileExtension not in fileTypeWhiteList:
+        #     return '不允许的文件类型'
+        # result = upload.upload(session.get('h_email'), filecont, filename_plain)  # filecont is bytes
+        # return result
     else:
-        sql = C919SQL()
-        sql.admin_link()
-        uid = sql.selectUserUID(session.get('h_email'))[0]
-        sql.end_link()
-        pubk = get_server_pubkey(uid)  # sent pubk
-        # todo: sign
-        # return render_template('testUpload.html', pubk=pubk)
+        # sql = C919SQL()
+        # sql.admin_link()
+        # uid = sql.selectUserUID(session.get('h_email'))[0]
+        # sql.end_link()
+        # pubk = get_server_pubkey(uid)  # sent pubk
+        # # todo: sign
+        # # return render_template('testUpload.html', pubk=pubk)
         return '<h1> Congratulations! </h1><h1> You find an Easter egg! </h1><h1> Have a nice day! </h1>'
 
 
@@ -465,22 +465,7 @@ def download(stamp):
         flag = True
     db.end_link()
     if flag:
-        f = open(aes_path + 'key.key', 'rb')
-        e_k = f.read()
-        f.close()
-        key = user_decrypt(result[2], e_k)
-        f = open(aes_path + 'iv.key', 'rb')
-        e_i = f.read()
-        f.close()
-        iv = user_decrypt(result[2], e_i)
-        f = open(file_path, 'rb')
-        e_filecont = f.read()
-        f.close()
-        filecont = aes_decrypt_download(key, iv, e_filecont)
-        f = open('./temp/' + result[1], 'wb')
-        f.write(filecont)
-        f.close()
-        return send_file('./temp/' + result[1], as_attachment=True)
+        return redirect(url_for('temp', flag='flag'))
     else:
         return send_file(file_path)
 
@@ -490,7 +475,7 @@ def user(uid):
     return 'In test, ' + uid
 
 
-@pages.route('/temp/<anything>')
+@pages.route('/temp/<flag>')
 def temp(flag):
     return flag
 

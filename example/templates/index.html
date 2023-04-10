@@ -43,7 +43,7 @@
                     </a>
                     <a href="/logout" class="nav_link">
                         <ion-icon name="log-out-outline" class="nav_icon"></ion-icon>
-                        <span class="nav_name">退出登陆</span>
+                        <span class="nav_name">退出登录</span>
                     </a>
                 </div>
             </nav>
@@ -59,7 +59,7 @@
                         <ion-icon class="upload-icon" name="cloud-upload"></ion-icon>
                         <p class="tip">Drag&Drop files here</p>
                         <div class="select-file">
-                            <button class="button-select-file" onclick="document.getElementById('file_input').click();" type="button">
+                            <button class="button-select-file" onclick="document.getElementById('file_input').click();" type="button" id="addfilebutton">
                             <i class="font font-file-select"></i>
                             <span>添加文件</span>
                             </button>
@@ -72,13 +72,15 @@
                             <!-- ngIf: useClientUploadFile -->
                         </div>
                         <div class="size-limit">
-                            <span>支持多个文件拖拽或点击上传，单个文件大小不能超过</span>
+                            <span>将文件拖拽或点击上传，单个文件大小不能超过</span>
                             <span class="max-upload-size ng-binding" ng-bind="5368709120|humanizeBytes">10 MB</span>
                         </div>
                     </div>
                     <div>
                         <br>
-                        <button class="button-select-file" onclick="fileUpload();" type="button"> 上 传 </button>
+                        <button class="button-select-file" onclick="fileUpload();" type="button" id="fileUploadButton"> 上 传 </button>
+                        <button class="button-select-file" onclick="fileDelete();" type="button" id="fileDeleteButton" style="display: none;"> 重新选择 </button>
+                        <span id="selectfilename"></span>
                         <br>
                         <span class="task">Preview:</span><br>
                         <img src="" style="width:200px;height:200px; margin:0 3px" hidden/>

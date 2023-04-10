@@ -32,7 +32,7 @@ const showMenu = (toggleId, navbarId, bodyId) => {
 }
 
 showMenu('nav-toggle', 'navbar', 'body-pd')
-
+document.getElementById('nav-toggle').click();
 
 const linkColor = document.querySelectorAll(".nav_link")
 
@@ -114,6 +114,7 @@ var dt_k = new DataTransfer();
 var dt_i = new DataTransfer();
 var temp;
 var fileList;
+var previewType = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif', 'image/bmp']
 var encrypt = new JSEncrypt();
 encrypt.setPublicKey(document.getElementById('pubk').innerHTML);
 
@@ -144,13 +145,16 @@ area.addEventListener('drop', function(event) {
     // 将类数组对象 转换成数组
     // var fileList = Array.from(event.dataTransfer.files);  //  es6 格式
     fileList = event.dataTransfer.files; // es5 格式
+    document.getElementById('selectfilename').innerHTML = fileList[0].name;
     document.getElementById('file_input').files = fileList;
     if (window.FileReader) {
         var preview = document.querySelector('img');
         var fr = new FileReader();
         fr.onloadend = function(e) {
-            preview.src = e.target.result;
-            preview.removeAttribute('hidden');
+            if (previewType.includes(fileList[0].type)) {
+                preview.src = e.target.result;
+                preview.removeAttribute('hidden');
+            }
         }
         fr.readAsDataURL(fileList[0]);
 
@@ -177,6 +181,8 @@ area.addEventListener('drop', function(event) {
             document.getElementById('e_key').files = dt_k.files;
             dt_i.items.add(iv_blob);
             document.getElementById('e_iv').files = dt_i.files;
+            document.getElementById('fileDeleteButton').removeAttribute('style');
+            document.getElementById('addfilebutton').disabled = true;
         }
         fr_e.readAsBinaryString(fileList[0]);
     }
@@ -185,13 +191,15 @@ area.addEventListener('drop', function(event) {
 var inputfile = document.querySelector('#file_input');
 inputfile.addEventListener('change', function(e) {
     fileList = e.target.files;
-    console.log(fileList[0])
+    document.getElementById('selectfilename').innerHTML = fileList[0].name;
     if (window.FileReader) {
         var preview = document.querySelector('img');
         var fr = new FileReader();
         fr.onloadend = function(e) {
-            preview.src = e.target.result;
-            preview.removeAttribute('hidden');
+            if (previewType.includes(fileList[0].type)) {
+                preview.src = e.target.result;
+                preview.removeAttribute('hidden');
+            }
         }
         fr.readAsDataURL(fileList[0]);
 
@@ -218,6 +226,8 @@ inputfile.addEventListener('change', function(e) {
             document.getElementById('e_key').files = dt_k.files;
             dt_i.items.add(iv_blob);
             document.getElementById('e_iv').files = dt_i.files;
+            document.getElementById('fileDeleteButton').removeAttribute('style');
+            document.getElementById('addfilebutton').disabled = true;
         }
         fr_e.readAsArrayBuffer(fileList[0]);
     }
@@ -225,13 +235,25 @@ inputfile.addEventListener('change', function(e) {
 
 function fileUpload() {
     if (!document.getElementById('file_input').files[0]) {
-        alert('no file selected');
+        alert('未选择文件！');
     } else {
         // console.log(document.getElementById('file_input').files[0]);
         document.getElementById('fileform').submit();
         // console.log(CryptoJS.AES.decrypt(temp, secret_key, { iv: iv, mode: CryptoJS.mode.OFB, padding: CryptoJS.pad.Pkcs7 }).toString());
     }
     // 
+}
+
+function fileDelete() {
+    $('#file_input').val('');
+    document.getElementById('selectfilename').innerHTML = '';
+    fileList = null;
+    dt_f.clearData()
+    dt_k.clearData()
+    dt_i.clearData();
+    document.getElementById('fileDeleteButton').setAttribute('style', 'display: none;');
+    document.querySelector('img').hidden = true;
+    document.getElementById('addfilebutton').disabled = false;
 }
 
 $(document).ready(function() {
