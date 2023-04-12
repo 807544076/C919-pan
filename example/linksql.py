@@ -112,6 +112,15 @@ class C919SQL:
             self.__db.commit()
             print('upload file created successfully')
 
+    def fast_upload(self, filename, owner_uid, filesize, stamp, from_id):
+        if not self.islink:
+            print('error! not linked yet')
+        else:
+            sql = "insert into file_info(filename, owner_uid, filehash, filesize, stamp, from_id) values ('" + filename + "', " + owner_uid + ", 'fastupload', " + filesize + ", '" + stamp + "'," + from_id + ");"
+            self.__cursor.execute(sql)
+            self.__db.commit()
+            print('fast upload file successfully')
+
     def delete_file(self, stamp):
         if not self.islink:
             print('error! not linked yet')
@@ -175,11 +184,11 @@ class C919SQL:
             result = self.__cursor.fetchone()
             return result
 
-    def selectFileHash(self, filename):
+    def selectFileHash(self, filehash):
         if not self.islink:
             print('error! not linked yet')
         else:
-            sql = "select filehash from file_info where filename = '" + filename + "';"
+            sql = "select id from file_info where filehash = '" + filehash + "';"
             self.__cursor.execute(sql)
             result = self.__cursor.fetchone()
             return result
@@ -225,7 +234,7 @@ class C919SQL:
         if not self.islink:
             print('error! not linked yet')
         else:
-            sql = "select filename, upload_date, filesize, stamp, isshared from file_info where owner_uid = " + str(uid) + ";"
+            sql = "select filename, upload_date, filesize, stamp, isshared, from_id from file_info where owner_uid = " + str(uid) + ";"
             self.__cursor.execute(sql)
             result = self.__cursor.fetchall()
             return result
@@ -262,6 +271,15 @@ class C919SQL:
             print('error! not linked yet')
         else:
             sql = "select owner_id from file_info where stamp = '" + stamp + "';"
+            self.__cursor.execute(sql)
+            result = self.__cursor.fetchone()
+            return result
+
+    def select_file_by_id(self, id):
+        if not self.islink:
+            print('error! not linked yet')
+        else:
+            sql = "select * from file_info where id = " + str(id) + ";"
             self.__cursor.execute(sql)
             result = self.__cursor.fetchone()
             return result

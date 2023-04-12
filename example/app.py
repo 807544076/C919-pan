@@ -158,6 +158,15 @@ def index():
             db = C919SQL()
             db.search_link()
             re = db.select_all_file(session.get('uid'))  # 第四项 stamp 为了文件下载页面铺垫
+            # temp = []
+            # for i in re:
+            #     if i[5] is not None:
+            #         j = db.select_file_by_id(i[5])
+            #         new = (i[0], i[1], i[2], i[3], i[4], i[5])
+            #         temp.append(new)
+            #     else:
+            #         temp.append(i)
+            # re = temp
             pubk = get_server_pubkey(session.get('uid'))  # sent pubk
             return render_template('index.html', userName=session.get('name'), filelist=re, pubk=pubk)
         else:
@@ -169,7 +178,8 @@ def index():
             return render_template('403.html')
         if request.form['fun_select'] == 'file_delete':
             del_stamp = request.form['delfilestamp']
-            upload.delete_file(del_stamp)
+            fastupload = request.form['fastupload']
+            upload.delete_file(del_stamp, fastupload)
             db.delete_file(del_stamp)
             flash('删除成功')
             return redirect(url_for('index'))
@@ -402,6 +412,10 @@ def file(stamp):
         db = C919SQL()
         db.search_link()
         result = db.select_file_stamp(stamp)
+        result = list(result)
+        if result[10] is not None:
+            filehash = db.select_file_by_id(result[10])[4]
+            result[4] = filehash
         owner = db.select_username_by_uid(result[2])[0]
         if not result:
             return render_template('404.html')
@@ -455,6 +469,8 @@ def download(stamp):
     result = db.select_file_stamp(stamp)
     if not result:
         return redirect(url_for('404'))
+    if result[10]:
+        pass
     aes_path = './userKey/' + str(result[2]) + '/file_aes/' + stamp + '/'
     file_path = './fileStorage/' + str(result[2]) + '/' + result[1] + result[4]
     code = request.form['code']

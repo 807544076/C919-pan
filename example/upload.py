@@ -25,17 +25,11 @@ def dirCheck(email):  # 为每个用户生成相应的文件夹
 def fileExist(newFileHash):  # hash相同即可快速上传
     db = C919SQL()
     db.search_link()
-    allHashRecord = db.selectAllFileHash()
-    flag = False
-    for item in allHashRecord:
-        if item[0] == newFileHash:
-            flag = True
-            break
-    if flag:
-        db.end_link()
-        return True
+    hashRecord = db.selectFileHash(newFileHash)
+    db.end_link()
+    if hashRecord:
+        return hashRecord[0]
     else:
-        db.end_link()
         return False
 
 
@@ -73,10 +67,13 @@ def upload(email, fileContent, nameString):
     fileHash = sha256(fileContent).hexdigest()  # 文件内容hash
     if fileExist(fileHash):  # 快速上传（拷贝记录）
         print('fast upload')
-        # db.upload_file(nameString, userUUID, fileHash, str(fileSize))
+        from_id = fileExist(fileHash)
+        stamp = gen_check_stamp()
+        mkdir('./userKey/' + userUUID + '/file_aes/' + stamp)
+        db.fast_upload(nameString, userUUID, str(fileSize), stamp, str(from_id))
     else:
         stamp = gen_check_stamp()  # 为每个文件生成独特的stamp
-        print(nameString, userUUID, fileHash, fileSize, stamp)
+        # print(nameString, userUUID, fileHash, fileSize, stamp)
         key, iv = aes_keygen(userUUID, stamp)  # 生成文件对应的aes密钥
         en_file_content = aes_encrypt(key, iv, fileContent)  # 对文件内容进行加密
         with open(userDir + '/' + nameString + fileHash, 'wb') as f:    # 保存加密的文件
@@ -86,12 +83,13 @@ def upload(email, fileContent, nameString):
     return 'success'
 
 
-def delete_file(stamp):
+def delete_file(stamp, fastupload):
     db = C919SQL()
     db.search_link()
     file = db.select_file_stamp(stamp)
     aes_del(file[2], stamp)
-    remove('./fileStorage/' + str(file[2]) + '/' + file[1] + file[4])
+    if fastupload is None:
+        remove('./fileStorage/' + str(file[2]) + '/' + file[1] + file[4])
     return
 
 
