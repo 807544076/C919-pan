@@ -26,7 +26,7 @@ const showMenu = (toggleId, navbarId, bodyId) => {
         toggle.addEventListener('click', () => {
             navbar.classList.toggle('expander');
             $('#welcome').toggle();
-            bodypadding.classList.toggle('body-pd');
+            // bodypadding.classList.toggle('body-pd');
         })
     }
 }
@@ -117,7 +117,6 @@ var fileList;
 var previewType = ['image/jpg', 'image/jpeg', 'image/png', 'image/gif', 'image/bmp']
 var encrypt = new JSEncrypt();
 encrypt.setPublicKey(document.getElementById('pubk').innerHTML);
-
 var sign = $('#sign').text(); //sign is sign encode with base64(string)
 var rb = $('#rb').text(); //rb is plain text
 var d_sign = encrypt.verify(rb, sign, CryptoJS.SHA256);
@@ -160,6 +159,7 @@ area.addEventListener('drop', function(event) {
 
         var fr_e = new FileReader();
         fr_e.onloadend = function(e) {
+            document.getElementById('file_hash').value = CryptoJS.SHA256(bufferToHex(e.target.result));
             var aes_result = aes_encrypt(bufferToHex(e.target.result), secret_key, iv); //input is string
             var encrypted_key = encrypt.encrypt(secret_key.toString());
             var encrypted_iv = encrypt.encrypt(iv.toString());
@@ -183,6 +183,7 @@ area.addEventListener('drop', function(event) {
             document.getElementById('e_iv').files = dt_i.files;
             document.getElementById('fileDeleteButton').removeAttribute('style');
             document.getElementById('addfilebutton').disabled = true;
+            fastUploadCheck();
         }
         fr_e.readAsBinaryString(fileList[0]);
     }
@@ -202,9 +203,9 @@ inputfile.addEventListener('change', function(e) {
             }
         }
         fr.readAsDataURL(fileList[0]);
-
         var fr_e = new FileReader();
         fr_e.onloadend = function(e) {
+            document.getElementById('file_hash').value = CryptoJS.SHA256(bufferToHex(e.target.result));
             var aes_result = aes_encrypt(bufferToHex(e.target.result), secret_key, iv);
             var encrypted_key = encrypt.encrypt(secret_key.toString());
             var encrypted_iv = encrypt.encrypt(iv.toString());
@@ -228,10 +229,42 @@ inputfile.addEventListener('change', function(e) {
             document.getElementById('e_iv').files = dt_i.files;
             document.getElementById('fileDeleteButton').removeAttribute('style');
             document.getElementById('addfilebutton').disabled = true;
+            fastUploadCheck();
         }
         fr_e.readAsArrayBuffer(fileList[0]);
     }
 })
+
+function fastUploadCheck() {
+    // console.log(document.getElementById('file_hash').innerHTML);
+    $.ajax({
+        type: 'POST',
+        url: this.url,
+        data: {
+            'fun_select': 'hash_check',
+            'file_hash_val': document.getElementById('file_hash').value,
+        },
+        success: function(data) {
+            console.log(data.condition);
+            if (data.condition == 0) {
+                document.getElementById('fileUploadButton').disabled = false;
+            } else if (data.condition == 1) {
+                alert('该文件已经上传过啦~');
+                fileDelete();
+            } else if (data.condition == 2) {
+                // fast upload
+                document.getElementById('fileUploadButton').disabled = false;
+                document.getElementById('fileUploadButton').setAttribute('onclick', 'fileFastUpload()');
+            } else {
+                alert('未知情况');
+            }
+        },
+        error: function() {
+            // console.log('server error')
+            alert('网络错误或服务器异常，请稍后重试');
+        }
+    })
+}
 
 function fileUpload() {
     if (!document.getElementById('file_input').files[0]) {
@@ -244,6 +277,14 @@ function fileUpload() {
     // 
 }
 
+function fileFastUpload() {
+    if (!document.getElementById('file_hash')) {
+        alert('未选择文件！');
+    } else {
+        document.getElementById('fastuploadform').submit();
+    }
+}
+
 function fileDelete() {
     $('#file_input').val('');
     document.getElementById('selectfilename').innerHTML = '';
@@ -254,6 +295,8 @@ function fileDelete() {
     document.getElementById('fileDeleteButton').setAttribute('style', 'display: none;');
     document.querySelector('img').hidden = true;
     document.getElementById('addfilebutton').disabled = false;
+    document.getElementById('file_hash').value = null;
+    document.getElementById('fileUploadButton').setAttribute('onclick', 'fileUpload()');
 }
 
 $(document).ready(function() {

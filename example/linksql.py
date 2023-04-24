@@ -234,7 +234,7 @@ class C919SQL:
         if not self.islink:
             print('error! not linked yet')
         else:
-            sql = "select filename, upload_date, filesize, stamp, isshared, from_id from file_info where owner_uid = " + str(uid) + ";"
+            sql = "select filename, upload_date, filesize, stamp, isshared, filehash from file_info where owner_uid = " + str(uid) + ";"
             self.__cursor.execute(sql)
             result = self.__cursor.fetchall()
             return result

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+
+<body>
+    <div>test</div>
+    <input name="name" id="name" type="text" placeholder="Li Hua">
+    <button id="ajax">ajax sent</button>
+    <div id="mes"></div>
+</body>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.4/jquery.js"></script>
+<script>
+    $('#ajax').on('click', function(e) {
+        $.ajax({
+            type: 'POST',
+            url: "{{url_for('ajaxtest')}}",
+            // contentType: 'text/plain',
+            data: {
+                name: $('#name').val()
+            },
+            success: function(data) {
+                console.log('success');
+                document.getElementById('mes').innerHTML = 'Hello,' + data.mes;
+            },
+            error: function(xhr, status, error) {
+                console.log('error')
+            }
+        })
+        e.preventDefault();
+    })
+</script>

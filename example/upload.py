@@ -64,13 +64,14 @@ def upload(email, fileContent, nameString):
     fileSize = len(fileContent)  # 文件大小
     assert fileSize <= 1024 * 1024 * 10, '文件过大,超过10MB限制'
     userUUID = str(db.selectUserUID(email)[0])
-    fileHash = sha256(fileContent).hexdigest()  # 文件内容hash
+    fileHash = sha256(fileContent.hex().encode()).hexdigest()  # 文件内容hash
     if fileExist(fileHash):  # 快速上传（拷贝记录）
-        print('fast upload')
-        from_id = fileExist(fileHash)
-        stamp = gen_check_stamp()
-        mkdir('./userKey/' + userUUID + '/file_aes/' + stamp)
-        db.fast_upload(nameString, userUUID, str(fileSize), stamp, str(from_id))
+        # print('fast upload')
+        # from_id = fileExist(fileHash)
+        # stamp = gen_check_stamp()
+        # mkdir('./userKey/' + userUUID + '/file_aes/' + stamp)
+        # db.fast_upload(nameString, userUUID, str(fileSize), stamp, str(from_id))
+        pass
     else:
         stamp = gen_check_stamp()  # 为每个文件生成独特的stamp
         # print(nameString, userUUID, fileHash, fileSize, stamp)
@@ -80,16 +81,14 @@ def upload(email, fileContent, nameString):
             f.write(en_file_content)
         db.upload_file(nameString, userUUID, fileHash, str(fileSize), stamp)
     db.end_link()
-    return 'success'
 
 
-def delete_file(stamp, fastupload):
+def delete_file(stamp):
     db = C919SQL()
     db.search_link()
     file = db.select_file_stamp(stamp)
     aes_del(file[2], stamp)
-    if fastupload is None:
-        remove('./fileStorage/' + str(file[2]) + '/' + file[1] + file[4])
+    remove('./fileStorage/' + str(file[2]) + '/' + file[1] + file[4])
     return
 
 

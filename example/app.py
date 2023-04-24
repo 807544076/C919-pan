@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session, send_file
+from flask import Flask, render_template, request, redirect, url_for, flash, session, send_file, jsonify
 from flask_session import Session
 from linksql import C919SQL
 import nacl.encoding
@@ -158,15 +158,6 @@ def index():
             db = C919SQL()
             db.search_link()
             re = db.select_all_file(session.get('uid'))  # 第四项 stamp 为了文件下载页面铺垫
-            # temp = []
-            # for i in re:
-            #     if i[5] is not None:
-            #         j = db.select_file_by_id(i[5])
-            #         new = (i[0], i[1], i[2], i[3], i[4], i[5])
-            #         temp.append(new)
-            #     else:
-            #         temp.append(i)
-            # re = temp
             pubk = get_server_pubkey(session.get('uid'))  # sent pubk
             return render_template('index.html', userName=session.get('name'), filelist=re, pubk=pubk)
         else:
@@ -178,8 +169,7 @@ def index():
             return render_template('403.html')
         if request.form['fun_select'] == 'file_delete':
             del_stamp = request.form['delfilestamp']
-            fastupload = request.form['fastupload']
-            upload.delete_file(del_stamp, fastupload)
+            upload.delete_file(del_stamp)
             db.delete_file(del_stamp)
             flash('删除成功')
             return redirect(url_for('index'))
@@ -194,6 +184,18 @@ def index():
             db.set_authorization_code(share_stamp, hcode)
             flash('您的授权码为：' + str(code))
             return redirect(url_for('index'))
+        if request.form['fun_select'] == 'hash_check':
+            fh = request.form['file_hash_val']
+            con = 0
+            allhash = db.selectAllFileHash()
+            for j in allhash:
+                if fh == j[0]:
+                    con = 2
+            allfile = db.select_all_file(session.get('uid'))
+            for i in allfile:
+                if fh == i[5]:
+                    con = 1
+            return jsonify(condition=con)
         if request.form['fun_select'] == 'file_upload':
             userUUID = str(db.selectUserUID(session.get('h_email'))[0])
             # get file(aes encrypt), key(rsa encrypt), iv(rsa encrypt)
@@ -220,8 +222,12 @@ def index():
             if fileExtension not in fileTypeWhiteList:
                 flash('不允许的文件类型')
                 return redirect(url_for('index'))
-            result = upload.upload(session.get('h_email'), filecont, filename)  # filecont is bytes
+            upload.upload(session.get('h_email'), filecont, filename)  # filecont is bytes
             flash('上传成功！')
+            return redirect(url_for('index'))
+        if request.form['fun_select'] == 'fast_upload':
+            filehash = request.form['file_hash']
+            print(filehash)
             return redirect(url_for('index'))
         db.end_link()
 
@@ -412,10 +418,6 @@ def file(stamp):
         db = C919SQL()
         db.search_link()
         result = db.select_file_stamp(stamp)
-        result = list(result)
-        if result[10] is not None:
-            filehash = db.select_file_by_id(result[10])[4]
-            result[4] = filehash
         owner = db.select_username_by_uid(result[2])[0]
         if not result:
             return render_template('404.html')
@@ -491,9 +493,14 @@ def user(uid):
     return 'In test, ' + uid
 
 
-@pages.route('/temp/<flag>')
-def temp(flag):
-    return flag
+@pages.route('/ajaxtest', methods=['POST', 'GET'])
+def ajaxtest():
+    if request.method == 'GET':
+        return render_template('ajaxtest.html')
+    else:
+        data = request.form['name']
+        print(data)
+        return jsonify(mes=data)
 
 
 @pages.route('/logout', methods=['GET', 'POST'])

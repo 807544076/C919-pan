@@ -69,6 +69,10 @@
                                 <input type='file' id="e_iv" name="e_iv" />
                                 <input name="fun_select" value="file_upload" />
                             </form>
+                            <form hidden method="post" action="{{url_for('index')}}" id="fastuploadform">
+                                <input name="fun_select" value="fast_upload" />
+                                <input name="file_hash" id="file_hash" />
+                            </form>
                             <!-- ngIf: useClientUploadFile -->
                         </div>
                         <div class="size-limit">
@@ -78,7 +82,7 @@
                     </div>
                     <div>
                         <br>
-                        <button class="button-select-file" onclick="fileUpload();" type="button" id="fileUploadButton"> 上 传 </button>
+                        <button class="button-select-file" onclick="fileUpload();" type="button" id="fileUploadButton" disabled="disabled"> 上 传 </button>
                         <button class="button-select-file" onclick="fileDelete();" type="button" id="fileDeleteButton" style="display: none;"> 重新选择 </button>
                         <span id="selectfilename"></span>
                         <br>
@@ -146,9 +150,8 @@
                             <li>
                                 <div class="file-show" style="display: flex;">
                                     <div class="large-9 column" style="min-width: 0;">
-                                        <input type="checkbox" class="left" ng-checked="checkAllSelected()" ng-click="switchAll()"> {%if sfile[5] != None%}
-                                        <span class="left file-name" title="(快速上传){{sfile[0]}}">{{sfile[0]}}</span> {%else%}
-                                        <span class="left file-name" title="{{sfile[0]}}">{{sfile[0]}}</span> {%endif%}
+                                        <input type="checkbox" class="left" ng-checked="checkAllSelected()" ng-click="switchAll()">
+                                        <span class="left file-name" title="{{sfile[0]}}">{{sfile[0]}}</span>
                                     </div>
                                     <div class="large-6 column">
                                         <span class="left upload-time">{{sfile[1]}}</span>
@@ -214,7 +217,8 @@
 <p hidden id="rb">{{ session.randombytes }}</p>
 <!--图案库-->
 <script src="https://unpkg.com/ionicons@5.1.2/dist/ionicons.js"></script>
-<script src="static/js/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.4/jquery.js"></script>
+<!-- <script src="static/js/jquery-3.2.1.slim.min.js"></script> -->
 <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
 <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
 <!-- <script src="static/js/script.js"></script> -->
